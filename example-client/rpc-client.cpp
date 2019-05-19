@@ -18,9 +18,14 @@ int main(int argc, char **argv)
         }
         std::cout << std::endl;
     } catch (const wisc::RPCSvc::RPCException &e) {
-        std::cout << e.message << std::endl;
-    } catch (const std::exception &e) {
-        std::cout << e.what() << std::endl;
+        std::cerr << "Remote call failed: " << e.message << std::endl;
+        return 1;
+    } catch (const RPC::RemoteException &e) {
+        std::cerr << "Remote call failed: " << e.what() << std::endl;
+        if (e.has_backtrace()) {
+            std::cerr << e.backtrace(); // The backtrace ends with a new line
+        }
+        return 1;
     }
 
     return 0;
