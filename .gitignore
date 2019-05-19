@@ -17,6 +17,7 @@
 # Don't ignore source files
 !*.cpp
 !*.h
+!*.hpp
 
 # Don't ignore configuration
 !/conf/conf.txt
