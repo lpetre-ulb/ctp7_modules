@@ -40,7 +40,6 @@ namespace RPC {
         struct functor_traits<R (Obj::*)(Args...) const>
         {
             using return_type = R;
-            using args_type = std::tuple<Args...>;
             using decay_args_type = std::tuple<typename std::decay<Args>::type...>;
         };
 
@@ -52,15 +51,6 @@ namespace RPC {
 
         template <typename Obj>
             using functor_return_t = decltype(functor_return_t_impl(&Obj::operator()));
-
-        template<typename Func,
-                 typename Traits = functor_traits<Func>,
-                 typename Args = typename Traits::args_type
-                >
-        Args functor_args_t_impl(Func);
-
-        template <typename Obj>
-            using functor_args_t = decltype(functor_args_t_impl(&Obj::operator()));
 
         template<typename Func,
                  typename Traits = functor_traits<Func>,
@@ -280,20 +270,20 @@ namespace RPC {
              *
              * Parameters are added from left to right.
              */
-            template<std::size_t N = 0,
+            template<typename TMethodArgs,
+                     std::size_t N = 0,
                      typename... Args,
                      typename std::enable_if<N < sizeof...(Args), int>::type = 0
                     >
             void set(const std::tuple<Args...> &args)
             {
-                Serializer<typename std::decay<
-                        typename std::tuple_element<N, std::tuple<Args...>>::type>
-                    ::type>::from(*this, std::get<N>(args));
+                Serializer<typename std::tuple_element<N, TMethodArgs>::type>::from(*this, std::get<N>(args));
 
-                this->set<N+1>(args);
+                this->set<TMethodArgs, N+1>(args);
             }
 
-            template<std::size_t N = 0,
+            template<typename TMethodArgs,
+                     std::size_t N = 0,
                      typename... Args,
                      typename std::enable_if<N == sizeof...(Args), int>::type = 0
                     >
@@ -557,7 +547,7 @@ namespace RPC {
             wisc::RPCMsg request(
                 std::string(Method::module) + "." + typeid(Method).name());
             Message query{&request};
-            query.set(functor_args_t<Method>(std::forward<Args>(args)...));
+            query.set<functor_decay_args_t<Method>>(std::forward_as_tuple(args...));
 
             // Remote call
             const wisc::RPCMsg response = call_method(request);
