@@ -42,9 +42,9 @@ static void __cxa_throw(void *thrown_exception,
     }
 
     // Call real __cxa_throw
-    static typeof(&__cxa_throw) real_cxa_throw = nullptr;
+    static decltype(&__cxa_throw) real_cxa_throw = nullptr;
     if (__builtin_expect(real_cxa_throw == nullptr, 0)) {
-        real_cxa_throw = (typeof(&__cxa_throw)) dlsym(RTLD_NEXT, "__cxa_throw");
+        real_cxa_throw = (decltype(&__cxa_throw)) dlsym(RTLD_NEXT, "__cxa_throw");
     }
     real_cxa_throw(thrown_exception, pvtinfo, dest);
 
