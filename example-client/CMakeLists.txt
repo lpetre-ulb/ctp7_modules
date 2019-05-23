@@ -29,4 +29,5 @@ find_package(wiscrpcsvc REQUIRED)
 add_executable(rpc-client rpc-client.cpp)
 target_include_directories(rpc-client PRIVATE ../include)
 target_link_libraries(rpc-client PRIVATE wiscrpcsvc::wiscrpcsvc) # rpcsvc lib
+target_link_libraries(rpc-client PRIVATE dl)
 install(TARGETS rpc-client DESTINATION bin/)
