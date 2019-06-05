@@ -3,6 +3,7 @@
  * \brief AMC SCA methods for RPC modules
  */
 
+#include <valarray>
 #include "amc/sca.h"
 #include "hw_constants.h"
 
@@ -299,22 +300,38 @@ void readSCAADCTemperatureSensors(const RPCMsg *request, RPCMsg *response)
   const uint32_t ohMask   = request->get_key_exists("ohMask") ? request->get_word("ohMask") : amc::FULL_OH_MASK;
 
   SCAADCChannelT chArr[5] = {
-  			      SCAADCChannel::VTTX_CSC_PT100,
-  			      SCAADCChannel::VTTX_GEM_PT100,
-  			      SCAADCChannel::GBT0_PT100,
-  			      SCAADCChannel::V6_FPGA_PT100,
-  			      SCAADCChannel::SCA_TEMP
-  			    };
-  int ohIdx;
+                  SCAADCChannel::VTTX_CSC_PT100,
+                  SCAADCChannel::VTTX_GEM_PT100,
+                  SCAADCChannel::GBT0_PT100,
+                  SCAADCChannel::V6_FPGA_PT100,
+                  SCAADCChannel::SCA_TEMP
+  };
+
+  uint32_t ohIdx;
   std::vector<uint32_t> result;
   std::vector<uint32_t> outData;
+
   for(auto const& channelName : chArr) {
     result = scaADCCommand(&la, channelName, ohMask);
+
+    std::valarray<float> mean(12);
+    for(int i = 0; i < 250; i++) {
+        auto tmp = scaADCCommand(&la, channelName, ohMask);
+
+        for(int j = 0; j < 12; j++)
+            mean[j] += tmp[j];
+    }
+    mean /= 250;
+
     ohIdx = 0;
     for(auto const& val : result) {
-    	LOGGER->log_message(LogManager::DEBUG, stdsprintf("Temperature for OH%i, SCA-ADC channel 0x%x = %i ",ohIdx, channelName, val));
-	outData.push_back((bitCheck(ohMask, ohIdx)<<28) | (ohIdx<<24) | (channelName<<16) | val);
-	++ohIdx;
+      if (ohIdx == 0)
+      {
+        LOGGER->log_message(LogManager::INFO, stdsprintf("Temperature for OH%i, SCA-ADC channel 0x%x = %i ",ohIdx, channelName, val));
+        LOGGER->log_message(LogManager::INFO, stdsprintf("Temperature for OH%i, SCA-ADC channel 0x%x = %f ",ohIdx, channelName, mean[ohIdx]));
+      }
+      outData.push_back((bitCheck(ohMask, ohIdx) << 28) | (ohIdx << 24) | (channelName << 16) | val);
+      ++ohIdx;
     }
   }
 
