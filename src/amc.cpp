@@ -5,13 +5,13 @@
  *  \author Brian Dorney <brian.l.dorney@cern.ch>
  */
 
+#include "hw_constants.h"
+
 #include "amc.h"
-#include "amc/ttc.h"
+#include "amc/blaster_ram.h"
 #include "amc/daq.h"
 #include "amc/sca.h"
-#include "amc/blaster_ram.h"
-#include "hw_constants.h"
-#include "amc/sca.h"
+#include "amc/ttc.h"
 
 #include "hw_constants.h"
 
@@ -403,6 +403,96 @@ void sbitReadOut(const RPCMsg *request, RPCMsg *response)
     rtxn.abort();
 } //End sbitReadOut()
 
+uint32_t readFPGADone(localArgs *la, const uint32_t ohMask)
+{
+    const auto reply = sendSCACommandWithReply(la, 0x2, 0x1, 0x1, 0x0, ohMask);
+
+    uint32_t FPGADone = 0;
+    for (uint32_t ohN = 0; ohN < 12; ++ohN)
+        FPGADone |= ((reply.at(ohN) >> 6) & 1) << ohN;
+
+    return FPGADone;
+}
+
+void testPROMless(const RPCMsg *request, RPCMsg *response)
+{
+    GETLOCALARGS(response);
+
+    const uint16_t ohMask = request->get_word("ohMask");
+    const uint32_t nOfIterations = request->get_word("nOfIterations");
+
+    // Reset the SCA
+    writeReg(&la, "GEM_AMC.SLOW_CONTROL.SCA.CTRL.SCA_RESET_ENABLE_MASK", ohMask);
+    writeReg(&la, "GEM_AMC.SLOW_CONTROL.SCA.CTRL.MODULE_RESET", 0x1);
+    writeReg(&la, "GEM_AMC.SLOW_CONTROL.SCA.ADC_MONITORING.MONITORING_OFF", 0xffffffff);
+
+    // Enable manual controls
+    writeReg(&la, "GEM_AMC.TTC.GENERATOR.ENABLE", 0x1);
+    writeReg(&la, "GEM_AMC.SLOW_CONTROL.SCA.CTRL.TTC_HARD_RESET_EN", 0x1);
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+    for (uint32_t i = 0; i < nOfIterations; ++i)
+    {
+        LOGGER->log_message(LogManager::INFO, std::to_string(i));
+
+        uint32_t FPGADone = 0;
+
+        writeReg(&la, "GEM_AMC.TTC.GENERATOR.SINGLE_HARD_RESET", 0x1);
+
+        // FPGA done must be low after hard reset
+        FPGADone = readFPGADone(&la, ohMask);
+        if ( (FPGADone & ohMask) != 0)
+            LOGGER->log_message(LogManager::INFO, "Hard reset failed.");
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+        // FPGA done goes high once the FPGA is programmed
+        FPGADone = readFPGADone(&la, ohMask);
+        if ( (!FPGADone & ohMask) != 0)
+            LOGGER->log_message(LogManager::INFO, "Programming failed.");
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+        writeReg(&la, "GEM_AMC.GEM_SYSTEM.CTRL.LINK_RESET", 0x1);
+        writeReg(&la, "GEM_AMC.OPTICAL_LINKS.MGT_CHANNEL_60.CTRL.RX_ERROR_CNT_RESET", 0x1);
+        writeReg(&la, "GEM_AMC.OPTICAL_LINKS.MGT_CHANNEL_61.CTRL.RX_ERROR_CNT_RESET", 0x1);
+        writeReg(&la, "GEM_AMC.OPTICAL_LINKS.MGT_CHANNEL_62.CTRL.RX_ERROR_CNT_RESET", 0x1);
+        writeReg(&la, "GEM_AMC.OPTICAL_LINKS.MGT_CHANNEL_63.CTRL.RX_ERROR_CNT_RESET", 0x1);
+        writeReg(&la, "GEM_AMC.TRIGGER.CTRL.MODULE_RESET", 0x1);
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+        // Check the trigger links
+        for(int trigLinkPair = 0; trigLinkPair < 2; ++trigLinkPair)
+        {
+            for(int trigLink = 0; trigLink < 2; ++trigLink)
+            {
+                int missedComma = readReg(&la, stdsprintf("GEM_AMC.TRIGGER.OH%d.LINK%d_MISSED_COMMA_CNT", trigLinkPair, trigLink));
+                int notinTable = readReg(&la, stdsprintf("GEM_AMC.OPTICAL_LINKS.MGT_CHANNEL_%d.STATUS.RX_NOT_IN_TABLE_CNT", 60 + trigLinkPair*2 + trigLink));
+                int ovf = readReg(&la, stdsprintf("GEM_AMC.TRIGGER.OH%d.LINK%d_OVERFLOW_CNT", trigLinkPair, trigLink));
+                int unf = readReg(&la, stdsprintf("GEM_AMC.TRIGGER.OH%d.LINK%d_UNDERFLOW_CNT", trigLinkPair, trigLink));
+                if ((missedComma > 1) || (ovf != 0) || (unf > 1) || (notinTable > 0))
+                {
+                    LOGGER->log_message(LogManager::INFO, stdsprintf("Bad trigger link : %d - %d", trigLinkPair, trigLink));
+                    LOGGER->log_message(LogManager::INFO, stdsprintf("not in table : %d - missed comma : %d - und : %d - ovf : %d", notinTable, missedComma, unf, ovf));
+                }
+            }
+        }
+
+        // Check communication with FPGA
+        if (readReg(&la, "GEM_AMC.OH.OH0.FPGA.CONTROL.RELEASE.DATE") == 0xdeaddead)
+        {
+            LOGGER->log_message(LogManager::INFO, "Cannot communicate with the FPGA.");
+            //return;
+        }
+    }
+
+    // Disable manual controls
+    writeReg(&la, "GEM_AMC.TTC.GENERATOR.ENABLE", 0x0);
+    writeReg(&la, "GEM_AMC.SLOW_CONTROL.SCA.CTRL.TTC_HARD_RESET_EN", 0x0);
+}
+
 extern "C" {
     const char *module_version_key = "amc v1.0.1";
     int module_activity_color = 4;
@@ -417,6 +507,7 @@ extern "C" {
         modmgr->register_method("amc", "getOHVFATMaskMultiLink",    getOHVFATMaskMultiLink);
         modmgr->register_method("amc", "repeatedRegRead",           repeatedRegRead);
         modmgr->register_method("amc", "sbitReadOut",               sbitReadOut);
+        modmgr->register_method("amc", "testPROMless",              testPROMless);
         modmgr->register_method("amc", "programAllOptohybridFPGAs", programAllOptohybridFPGAs);
 
         // DAQ module methods (from amc/daq)
