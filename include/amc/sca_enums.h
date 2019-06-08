@@ -269,6 +269,7 @@ class SCASettings {
             case (VTTX_CSC_PT100):	return true;
             case (VTTX_GEM_PT100):	return true;
             case (GBT0_PT100):		return true;
+            case (PROM_V1P8):		return true;
             case (V6_FPGA_PT100):	return true;
             default:			return false;
         }

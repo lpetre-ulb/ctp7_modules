@@ -3,6 +3,8 @@
  * \brief AMC SCA methods for RPC modules
  */
 
+#include <thread>
+#include <chrono>
 #include <valarray>
 #include "amc/sca.h"
 #include "hw_constants.h"
@@ -299,7 +301,8 @@ void readSCAADCTemperatureSensors(const RPCMsg *request, RPCMsg *response)
 
   const uint32_t ohMask   = request->get_key_exists("ohMask") ? request->get_word("ohMask") : amc::FULL_OH_MASK;
 
-  SCAADCChannelT chArr[5] = {
+  SCAADCChannelT chArr[6] = {
+                  SCAADCChannel::PROM_V1P8,
                   SCAADCChannel::VTTX_CSC_PT100,
                   SCAADCChannel::VTTX_GEM_PT100,
                   SCAADCChannel::GBT0_PT100,
@@ -317,6 +320,9 @@ void readSCAADCTemperatureSensors(const RPCMsg *request, RPCMsg *response)
     std::valarray<float> mean(12);
     for(int i = 0; i < 250; i++) {
         auto tmp = scaADCCommand(&la, channelName, ohMask);
+
+        if (channelName == SCAADCChannel::PROM_V1P8)
+            LOGGER->log_message(LogManager::INFO, stdsprintf("1 kOhm : %i", tmp.at(0)));
 
         for(int j = 0; j < 12; j++)
             mean[j] += tmp[j];
