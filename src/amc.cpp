@@ -5,14 +5,13 @@
  *  \author Brian Dorney <brian.l.dorney@cern.ch>
  */
 
-#include "hw_constants.h"
-
 #include "amc.h"
 #include "amc/blaster_ram.h"
 #include "amc/daq.h"
 #include "amc/sca.h"
 #include "amc/ttc.h"
 
+#include "gbt.h"
 #include "hw_constants.h"
 
 #include <chrono>
@@ -414,12 +413,37 @@ uint32_t readFPGADone(localArgs *la, const uint32_t ohMask)
     return FPGADone;
 }
 
+void FPGAPhaseScan(const RPCMsg* request, RPCMsg *response)
+{
+    GETLOCALARGS(response);
+
+    for (unsigned int phase = 0; phase < 15; ++phase)
+    {
+        unsigned int successes = 0;
+
+        writeGBTRegLocal(&la, 0, 0, 163, phase);
+        writeGBTRegLocal(&la, 0, 0, 167, phase);
+        writeGBTRegLocal(&la, 0, 0, 171, phase);
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
+        for (unsigned int i = 0; i < 100; ++i)
+        {
+            if (readReg(&la, "GEM_AMC.OH.OH0.FPGA.CONTROL.RELEASE.DATE") != 0xdeaddead)
+                successes++;
+        }
+
+        LOGGER->log_message(LogManager::INFO, stdsprintf("Phase : %d - Success : %d", phase, successes));
+    }
+}
+
 void testPROMless(const RPCMsg *request, RPCMsg *response)
 {
     GETLOCALARGS(response);
 
     const uint16_t ohMask = request->get_word("ohMask");
     const uint32_t nOfIterations = request->get_word("nOfIterations");
+    const bool stopOnError = request->get_word("stopOnError");
 
     // Reset the SCA
     writeReg(&la, "GEM_AMC.SLOW_CONTROL.SCA.CTRL.SCA_RESET_ENABLE_MASK", ohMask);
@@ -445,14 +469,14 @@ void testPROMless(const RPCMsg *request, RPCMsg *response)
         if ( (FPGADone & ohMask) != 0)
             LOGGER->log_message(LogManager::INFO, "Hard reset failed.");
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(160));
 
         // FPGA done goes high once the FPGA is programmed
         FPGADone = readFPGADone(&la, ohMask);
         if ( (!FPGADone & ohMask) != 0)
             LOGGER->log_message(LogManager::INFO, "Programming failed.");
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
         writeReg(&la, "GEM_AMC.GEM_SYSTEM.CTRL.LINK_RESET", 0x1);
         writeReg(&la, "GEM_AMC.OPTICAL_LINKS.MGT_CHANNEL_60.CTRL.RX_ERROR_CNT_RESET", 0x1);
@@ -461,7 +485,18 @@ void testPROMless(const RPCMsg *request, RPCMsg *response)
         writeReg(&la, "GEM_AMC.OPTICAL_LINKS.MGT_CHANNEL_63.CTRL.RX_ERROR_CNT_RESET", 0x1);
         writeReg(&la, "GEM_AMC.TRIGGER.CTRL.MODULE_RESET", 0x1);
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        writeGBTRegLocal(&la, 0, 0, 163, 11);
+        writeGBTRegLocal(&la, 0, 0, 167, 11);
+        writeGBTRegLocal(&la, 0, 0, 171, 11);
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
+        // Check communication with FPGA
+        if (readReg(&la, "GEM_AMC.OH.OH0.FPGA.CONTROL.RELEASE.DATE") == 0xdeaddead)
+        {
+            LOGGER->log_message(LogManager::INFO, "Cannot communicate with the FPGA.");
+            if (stopOnError) return;
+        }
 
         // Check the trigger links
         for(int trigLinkPair = 0; trigLinkPair < 2; ++trigLinkPair)
@@ -476,15 +511,9 @@ void testPROMless(const RPCMsg *request, RPCMsg *response)
                 {
                     LOGGER->log_message(LogManager::INFO, stdsprintf("Bad trigger link : %d - %d", trigLinkPair, trigLink));
                     LOGGER->log_message(LogManager::INFO, stdsprintf("not in table : %d - missed comma : %d - und : %d - ovf : %d", notinTable, missedComma, unf, ovf));
+                    if (stopOnError) return;
                 }
             }
-        }
-
-        // Check communication with FPGA
-        if (readReg(&la, "GEM_AMC.OH.OH0.FPGA.CONTROL.RELEASE.DATE") == 0xdeaddead)
-        {
-            LOGGER->log_message(LogManager::INFO, "Cannot communicate with the FPGA.");
-            //return;
         }
     }
 
@@ -509,6 +538,7 @@ extern "C" {
         modmgr->register_method("amc", "sbitReadOut",               sbitReadOut);
         modmgr->register_method("amc", "testPROMless",              testPROMless);
         modmgr->register_method("amc", "programAllOptohybridFPGAs", programAllOptohybridFPGAs);
+        modmgr->register_method("amc", "FPGAPhaseScan",             FPGAPhaseScan);
 
         // DAQ module methods (from amc/daq)
         modmgr->register_method("amc", "enableDAQLink",           enableDAQLink);
