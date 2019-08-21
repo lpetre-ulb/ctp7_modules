@@ -53,6 +53,16 @@ namespace oh {
         constexpr uint32_t SBITS_PER_OH     = 768;   ///< The number of S-bits per OptoHybrid
     }
 
+    namespace triggerLinkMappings {
+        namespace ge11 {
+            constexpr std::array<std::array<uint8_t, 2>, amc::ge11::OH_PER_AMC> OH_TO_CHANNEL {
+                { {62, 63}, {61, 60}, {59, 58}, {57, 56}, {54, 55}, {52, 53}, {50, 51}, {49, 48}, {47, 46}, {45, 44}, {41, 37}, {38, 39} }
+            };
+        }
+
+        using namespace GEM_VARIANT;
+    }
+
     using namespace GEM_VARIANT;
 }
 

@@ -8,9 +8,12 @@
 #include "amc.h"
 #include "amc/ttc.h"
 #include "amc/daq.h"
+#include "amc/sca.h"
 #include "amc/blaster_ram.h"
 #include "hw_constants.h"
 #include "amc/sca.h"
+
+#include "hw_constants.h"
 
 #include <chrono>
 #include <string>
@@ -112,6 +115,170 @@ void getOHVFATMaskMultiLink(const RPCMsg *request, RPCMsg *response)
 
     rtxn.abort();
 } //End getOHVFATMaskMultiLink(...)
+
+uint32_t readFPGADone(localArgs *la, const uint32_t ohMask)
+{
+    const auto reply = sendSCACommandWithReply(la, 0x2, 0x1, 0x1, 0x0, ohMask);
+
+    uint32_t FPGADone = 0;
+    for (uint32_t ohN = 0; ohN < amc::OH_PER_AMC; ++ohN)
+        FPGADone |= ((reply.at(ohN) >> 6) & 1) << ohN;
+
+    return FPGADone;
+}
+
+void programAllOptohybridFPGAsLocal(localArgs *la, uint32_t ohMask, const uint32_t nOfIterations, const uint8_t mode)
+{
+    const bool stopOnError = mode & 0x1;
+    const bool checkCSC = (mode >> 1) & 0x1;
+
+    std::array<uint32_t, amc::OH_PER_AMC> hardResetFails{};
+    std::array<uint32_t, amc::OH_PER_AMC> progFails{};
+    std::array<uint32_t, amc::OH_PER_AMC> commFails{};
+    std::array<uint32_t, amc::OH_PER_AMC> triggerFails{};
+
+    // Enable manual controls
+    writeReg(la, "GEM_AMC.TTC.GENERATOR.ENABLE", 0x1);
+    writeReg(la, "GEM_AMC.SLOW_CONTROL.SCA.CTRL.TTC_HARD_RESET_EN", ohMask);
+
+/*
+        writeReg(la, "GEM_AMC.TTC.GENERATOR.SINGLE_HARD_RESET", 0x1);
+        std::this_thread::sleep_for(std::chrono::milliseconds(80));
+*/
+        /*for (uint8_t ohN = 0; ohN < amc::OH_PER_AMC; ++ohN) {
+            if ( ~(ohMask >> ohN) & 0x1 )
+                continue;
+
+            writeReg(la, stdsprintf("GEM_AMC.OH.OH%hhu.FPGA.TRIG.ENABLE_RESET", ohN), 0x0);
+        }*/
+
+
+    for (uint32_t i = 0; i < nOfIterations; ++i)
+    {
+        LOGGER->log_message(LogManager::INFO, stdsprintf("Iteration %d", i));
+        bool error = false;
+
+        // Program the FPGA
+        writeReg(la, "GEM_AMC.TTC.GENERATOR.SINGLE_HARD_RESET", 0x1);
+
+/*
+        for (uint8_t ohN = 0; ohN < amc::OH_PER_AMC; ++ohN) {
+            if ( ~(ohMask >> ohN) & 0x1 )
+                continue;
+
+            writeReg(la, stdsprintf("GEM_AMC.OH.OH%hhu.FPGA.TRIG.LINKS.RESET", ohN), 0x1);
+        }
+*/
+
+        // FPGA done must be low after hard reset
+        const uint32_t FPGADoneAfterReset = readFPGADone(la, ohMask);
+
+        // Wait for FPGA to be programmed ~70 ms
+        std::this_thread::sleep_for(std::chrono::milliseconds(80));
+
+        // FPGA done goes high once the FPGA is programmed
+        const uint32_t FPGADoneAfterProgramming = readFPGADone(la, ohMask);
+
+        // Wait FPGA initialization
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+        // Resets
+        writeReg(la, "GEM_AMC.GEM_SYSTEM.CTRL.LINK_RESET", 0x1);
+
+        // Need to wait after a link reset; not clear why...
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
+        for (uint8_t ohN = 0; ohN < amc::OH_PER_AMC; ++ohN) {
+            if ( !( ((ohMask >> ohN) & 0x1) || (ohN ? (checkCSC && ((ohMask >> (ohN-1)) & 0x1)) : 0) ) )
+                continue;
+
+            for (const uint8_t channel : oh::triggerLinkMappings::OH_TO_CHANNEL[ohN])
+                writeReg(la, stdsprintf("GEM_AMC.OPTICAL_LINKS.MGT_CHANNEL_%hhu.CTRL.RX_ERROR_CNT_RESET", channel), 0x1);
+        }
+        writeReg(la, "GEM_AMC.TRIGGER.CTRL.MODULE_RESET", 0x1);
+
+        // Wait for errors to build up
+        // std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+        // Check programming
+        if ( (FPGADoneAfterReset & ohMask) != 0)
+            LOGGER->log_message(LogManager::INFO, "Hard reset failed.");
+        if ( (~FPGADoneAfterProgramming & ohMask) != 0)
+            LOGGER->log_message(LogManager::INFO, "Programming failed.");
+
+        // Check communication with FPGA
+        for (uint8_t ohN = 0; ohN < amc::OH_PER_AMC; ++ohN) {
+            if ( ~(ohMask >> ohN) & 0x1 )
+                continue;
+
+            if (readReg(la, stdsprintf("GEM_AMC.OH.OH%hhu.FPGA.CONTROL.RELEASE.DATE", ohN)) == 0xdeaddead)
+            {
+                LOGGER->log_message(LogManager::INFO, stdsprintf("Cannot communicate with the FPGA. (OH%hhu)", ohN));
+                ++commFails[ohN];
+                error = true;
+            }
+
+            const uint32_t sotReady = readReg(la, stdsprintf("GEM_AMC.OH.OH%hhu.FPGA.TRIG.CTRL.SBIT_SOT_READY", ohN));
+            const uint32_t sotUnstable = readReg(la, stdsprintf("GEM_AMC.OH.OH%hhu.FPGA.TRIG.CTRL.SBIT_SOT_UNSTABLE", ohN));
+            const uint32_t sotInvalidBitskip = readReg(la, stdsprintf("GEM_AMC.OH.OH%hhu.FPGA.TRIG.CTRL.SBIT_SOT_INVALID_BITSKIP", ohN));
+
+            if ( (sotReady != 0xffffff) or (sotUnstable != 0x0) or (sotInvalidBitskip != 0x0) )
+            {
+                LOGGER->log_message(LogManager::INFO, stdsprintf("Incorrect Sbits initialization. (OH%hhu, %u, %u, %u)", ohN, sotReady, sotUnstable, sotInvalidBitskip));
+                error = true;
+            }
+        }
+
+        // Check the trigger links
+        for (uint8_t ohN = 0; ohN < amc::OH_PER_AMC; ++ ohN) {
+            if ( !( ((ohMask >> ohN) & 0x1) || (ohN ? (checkCSC && ((ohMask >> (ohN-1)) & 0x1)) : 0) ) )
+                continue;
+
+            for (uint8_t linkIdx = 0; linkIdx < 2; ++linkIdx)
+            {
+                const uint32_t notinTable = readReg(la, stdsprintf("GEM_AMC.OPTICAL_LINKS.MGT_CHANNEL_%hhu.STATUS.RX_NOT_IN_TABLE_CNT", 
+                                         oh::triggerLinkMappings::OH_TO_CHANNEL[ohN][linkIdx]));
+                const uint32_t missedComma = readReg(la, stdsprintf("GEM_AMC.TRIGGER.OH%hhu.LINK%hhu_MISSED_COMMA_CNT", ohN, linkIdx));
+                const uint32_t overflow = readReg(la, stdsprintf("GEM_AMC.TRIGGER.OH%hhu.LINK%hhu_OVERFLOW_CNT", ohN, linkIdx));
+                const uint32_t underflow = readReg(la, stdsprintf("GEM_AMC.TRIGGER.OH%hhu.LINK%hhu_UNDERFLOW_CNT", ohN, linkIdx));
+
+                if ( (notinTable > 0) || (missedComma > 0) || (overflow > 0) || (underflow > 0) )
+                {
+                    LOGGER->log_message(LogManager::INFO, stdsprintf("Bad trigger link : OH%hhu - link%hhu", ohN, linkIdx));
+                    LOGGER->log_message(LogManager::INFO, stdsprintf("Not in table : %d - Missed comma : %d - Overflow : %d - Underflow : %d", notinTable, missedComma, overflow, underflow));
+                    ++triggerFails[ohN];
+                    //if ( (notinTable > 0) || (missedComma > 1) || (overflow > 2) || (underflow > 2) )
+                    error = true;
+                }
+            }
+        }
+
+        if (error && stopOnError) break;
+    }
+
+    for (uint8_t ohN = 0; ohN < amc::OH_PER_AMC; ++ ohN) {
+        LOGGER->log_message(LogManager::INFO, stdsprintf("== Summary == OH%hhu - Comm failures: %d - Trigger failures: %d", ohN, commFails[ohN], triggerFails[ohN]));
+    }
+
+    // Disable manual controls
+    writeReg(la, "GEM_AMC.TTC.GENERATOR.ENABLE", 0x0);
+    writeReg(la, "GEM_AMC.SLOW_CONTROL.SCA.CTRL.TTC_HARD_RESET_EN", 0x0);
+
+} // End programAllOptohybridFPGAsLocal(...)
+
+void programAllOptohybridFPGAs(const RPCMsg *request, RPCMsg *response)
+{
+    GETLOCALARGS(response);
+
+    const uint16_t ohMask = request->get_word("ohMask");
+    const uint32_t nOfIterations = request->get_word("nOfIterations");
+    const uint8_t mode = request->get_word("mode");
+
+    programAllOptohybridFPGAsLocal(&la, ohMask, nOfIterations, mode);
+
+    rtxn.abort();
+} // End programAllOptohybridFPGAs
 
 void repeatedRegRead(const RPCMsg *request, RPCMsg *response)
 {
@@ -246,10 +413,11 @@ extern "C" {
             return; // Do not register our functions, we depend on memsvc.
         }
 
-        modmgr->register_method("amc", "getOHVFATMask",          getOHVFATMask);
-        modmgr->register_method("amc", "getOHVFATMaskMultiLink", getOHVFATMaskMultiLink);
-        modmgr->register_method("amc", "repeatedRegRead",        repeatedRegRead);
-        modmgr->register_method("amc", "sbitReadOut",            sbitReadOut);
+        modmgr->register_method("amc", "getOHVFATMask",             getOHVFATMask);
+        modmgr->register_method("amc", "getOHVFATMaskMultiLink",    getOHVFATMaskMultiLink);
+        modmgr->register_method("amc", "repeatedRegRead",           repeatedRegRead);
+        modmgr->register_method("amc", "sbitReadOut",               sbitReadOut);
+        modmgr->register_method("amc", "programAllOptohybridFPGAs", programAllOptohybridFPGAs);
 
         // DAQ module methods (from amc/daq)
         modmgr->register_method("amc", "enableDAQLink",           enableDAQLink);
