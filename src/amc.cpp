@@ -402,17 +402,6 @@ void sbitReadOut(const RPCMsg *request, RPCMsg *response)
     rtxn.abort();
 } //End sbitReadOut()
 
-uint32_t readFPGADone(localArgs *la, const uint32_t ohMask)
-{
-    const auto reply = sendSCACommandWithReply(la, 0x2, 0x1, 0x1, 0x0, ohMask);
-
-    uint32_t FPGADone = 0;
-    for (uint32_t ohN = 0; ohN < 12; ++ohN)
-        FPGADone |= ((reply.at(ohN) >> 6) & 1) << ohN;
-
-    return FPGADone;
-}
-
 void FPGAPhaseScan(const RPCMsg* request, RPCMsg *response)
 {
     GETLOCALARGS(response);
