@@ -166,5 +166,6 @@ uint16_t decodeChipID(uint32_t encChipID);
  */
 void getVFAT3ChipIDsLocal(localArgs * la, uint32_t ohN, uint32_t vfatMask=0xFF000000, bool rawID=false);
 void getVFAT3ChipIDs(const RPCMsg *request, RPCMsg *response);
+void readDACValues(const RPCMsg *request, RPCMsg *response);
 
 #endif

@@ -626,6 +626,119 @@ void getVFAT3ChipIDs(const RPCMsg *request, RPCMsg *response)
   rtxn.abort();
 }
 
+void readDACValues(const RPCMsg *request, RPCMsg *response)
+{
+  GETLOCALARGS(response);
+
+  uint32_t ohN      = request->get_word("ohN");
+  uint32_t vfatMask = request->get_word("vfatMask");
+
+  LOGGER->log_message(LogManager::DEBUG, "Reading VFAT3 DAC values");
+
+  std::array<std::pair<uint32_t, std::string>, 27> dacNames = {
+    std::make_pair<uint32_t, std::string>(0, "CFG_IREF"),
+    std::make_pair<uint32_t, std::string>(1, "CFG_CAL_DAC"),
+    std::make_pair<uint32_t, std::string>(2, "CFG_BIAS_PRE_I_BIT"),
+    std::make_pair<uint32_t, std::string>(3, "CFG_BIAS_PRE_I_BLCC"),
+    std::make_pair<uint32_t, std::string>(4, "CFG_BIAS_PRE_I_BSF"),
+    std::make_pair<uint32_t, std::string>(5, "CFG_BIAS_SH_I_BFCAS"),
+    std::make_pair<uint32_t, std::string>(6, "CFG_BIAS_SH_I_BDIFF"),
+    std::make_pair<uint32_t, std::string>(7, "CFG_BIAS_SD_I_BDIFF"),
+    std::make_pair<uint32_t, std::string>(8, "CFG_BIAS_SD_I_BFCAS"),
+    std::make_pair<uint32_t, std::string>(9, "CFG_BIAS_SD_I_BSF"),
+    std::make_pair<uint32_t, std::string>(10, "CFG_BIAS_CFD_DAC_1"),
+    std::make_pair<uint32_t, std::string>(11, "CFG_BIAS_CFD_DAC_2"),
+    std::make_pair<uint32_t, std::string>(12, "CFG_HYST"),
+    std::make_pair<uint32_t, std::string>(13, "CFG_CFD_IREF_LOCAL"),
+    std::make_pair<uint32_t, std::string>(14, "CFG_THR_ARM_DACI"),
+    std::make_pair<uint32_t, std::string>(15, "CFG_THR_ZCC_DACI"),
+    std::make_pair<uint32_t, std::string>(16, "CFG_SLVS_BIAS"),
+    // std::make_pair<uint32_t, std::string>(17, "CFG_THR_ARM_DAC"),
+    // std::make_pair<uint32_t, std::string>(18, "CFG_THR_ARM_DAC"),
+    // std::make_pair<uint32_t, std::string>(19, "CFG_THR_ARM_DAC"),
+    // std::make_pair<uint32_t, std::string>(20, "CFG_THR_ARM_DAC"),
+    // std::make_pair<uint32_t, std::string>(21, "CFG_THR_ARM_DAC"),
+    // std::make_pair<uint32_t, std::string>(22, "CFG_THR_ARM_DAC"),
+    // std::make_pair<uint32_t, std::string>(23, "CFG_THR_ARM_DAC"),
+    // std::make_pair<uint32_t, std::string>(24, "CFG_THR_ARM_DAC"),
+    // std::make_pair<uint32_t, std::string>(25, "CFG_THR_ARM_DAC"),
+    // std::make_pair<uint32_t, std::string>(26, "CFG_THR_ARM_DAC"),
+    // std::make_pair<uint32_t, std::string>(27, "CFG_THR_ARM_DAC"),
+    // std::make_pair<uint32_t, std::string>(28, "CFG_THR_ARM_DAC"),
+    // std::make_pair<uint32_t, std::string>(29, "CFG_THR_ARM_DAC"),
+    // std::make_pair<uint32_t, std::string>(10, "CFG_THR_ARM_DAC"),
+    // std::make_pair<uint32_t, std::string>(31, "CFG_THR_ARM_DAC"),
+    std::make_pair<uint32_t, std::string>(32, "CFG_VBG"),
+    std::make_pair<uint32_t, std::string>(33, "CFG_CAL_DAC"),
+    std::make_pair<uint32_t, std::string>(34, "CFG_BIAS_PRE_VREF"),
+    std::make_pair<uint32_t, std::string>(35, "CFG_THR_ARM_DACV"),
+    std::make_pair<uint32_t, std::string>(36, "CFG_THR_ZCC_DACV"),
+    std::make_pair<uint32_t, std::string>(37, "CFG_VTEMP_INT"),
+    std::make_pair<uint32_t, std::string>(38, "CFG_VTEMP_EXT"),
+    std::make_pair<uint32_t, std::string>(39, "CFG_VREF_ADC"),
+    std::make_pair<uint32_t, std::string>(40, "CFG_VIN_ADC"),
+    std::make_pair<uint32_t, std::string>(41, "CFG_SLVS_VREF")
+  };
+
+  uint32_t adcAddr[oh::VFATS_PER_OH];
+  uint32_t adcCacheUpdateAddr[oh::VFATS_PER_OH];
+  bool useExtRefADC   = false;
+  bool foundAdcCached = false;
+
+  uint32_t notmask = ~vfatMask & 0xFFFFFF;
+
+  for (size_t vfatN = 0; vfatN < oh::VFATS_PER_OH; ++vfatN) {
+    //                                   GEM_AMC.OH.OHYY.GEB.VFATXX.ADC1_CACHED
+    //                                   GEM_AMC.OH.OHYY.GEB.VFATXX.ADC0_UPDATE
+    std::string strRegBase = stdsprintf("GEM_AMC.OH.OH%i.GEB.VFAT%i.",ohN,vfatN);
+
+    if (useExtRefADC) {
+      if ((foundAdcCached = la.dbi.get(la.rtxn, strRegBase + "ADC1_CACHED"))) {
+        adcAddr[vfatN]            = getAddress(&la, strRegBase + "ADC1_CACHED");
+        adcCacheUpdateAddr[vfatN] = getAddress(&la, strRegBase + "ADC1_UPDATE");
+      } else {
+        adcAddr[vfatN] = getAddress(&la, strRegBase + "ADC1");
+      }
+    } else {
+      if ((foundAdcCached = la.dbi.get(la.rtxn, strRegBase + "ADC0_CACHED"))) {
+        adcAddr[vfatN]            = getAddress(&la, strRegBase + "ADC0_CACHED");
+        adcCacheUpdateAddr[vfatN] = getAddress(&la, strRegBase + "ADC0_UPDATE");
+      } else {
+        adcAddr[vfatN] = getAddress(&la, strRegBase + "ADC0");
+      }
+    }
+  }
+
+  for (auto const& dac : dacNames) {
+    LOGGER->log_message(LogManager::INFO, "Reading back DAC "+dac.second);
+    configureVFAT3DacMonitorLocal(&la, ohN, vfatMask, dac.first);
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+
+    for (size_t vfatN=0; vfatN < oh::VFATS_PER_OH; ++vfatN) {
+      if (!((notmask >> vfatN) & 0x1)) {
+        std::stringstream msg;
+        msg << "Skipping VFAT" << vfatN;
+        LOGGER->log_message(LogManager::INFO, msg.str());
+        continue;
+      }
+      uint32_t val = 0;
+      for (size_t c = 0; c < 100; ++c) {
+        if (foundAdcCached) {
+          readRawAddress(adcCacheUpdateAddr[vfatN], la.response);
+          std::this_thread::sleep_for(std::chrono::microseconds(30));
+        }
+        val += readRawAddress(adcAddr[vfatN], la.response);
+      }
+      val = val/100;
+      std::stringstream regName;
+      regName << "OH" << ohN << ".VFAT" << vfatN << "." << dac.second;
+      la.response->set_word(regName.str(), val);
+    }
+  }
+
+  rtxn.abort();
+}
+
 extern "C" {
     const char *module_version_key = "vfat3 v1.0.1";
     int module_activity_color = 4;
@@ -641,6 +754,7 @@ extern "C" {
         modmgr->register_method("vfat3", "getChannelRegistersVFAT3", getChannelRegistersVFAT3);
         modmgr->register_method("vfat3", "getVFAT3ChipIDs", getVFAT3ChipIDs);
         modmgr->register_method("vfat3", "readVFAT3ADC", readVFAT3ADC);
+        modmgr->register_method("vfat3", "readDACValues", readDACValues);
         modmgr->register_method("vfat3", "readVFAT3ADCMultiLink", readVFAT3ADCMultiLink);
         modmgr->register_method("vfat3", "setChannelRegistersVFAT3", setChannelRegistersVFAT3);
         modmgr->register_method("vfat3", "statusVFAT3s", statusVFAT3s);
