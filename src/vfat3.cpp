@@ -221,7 +221,7 @@ void getChannelRegistersVFAT3Local(localArgs *la, uint32_t ohN, uint32_t vfatMas
             chanAddr = getAddress(la, regBuf);
 
             //Build the channel register
-            LOGGER->log_message(LogManager::INFO, stdsprintf("Reading channel register for VFAT%i chan %i",vfatN,chan));
+            LOGGER->log_message(LogManager::DEBUG, stdsprintf("Reading channel register for VFAT%i chan %i",vfatN,chan));
             chanRegData[idx] = readRawAddress(chanAddr, la->response);
             std::this_thread::sleep_for(std::chrono::microseconds(200));
         } //End Loop over channels
@@ -432,7 +432,7 @@ void setChannelRegistersVFAT3(const RPCMsg *request, RPCMsg *response){
 
 void statusVFAT3sLocal(localArgs * la, uint32_t ohN)
 {
-    std::string regs [] = {"CFG_PULSE_STRETCH ",
+    std::string regs [] = {"CFG_PULSE_STRETCH",
                            "CFG_SYNC_LEVEL_MODE",
                            "CFG_FP_FE",
                            "CFG_RES_PRE",
@@ -466,7 +466,7 @@ void statusVFAT3sLocal(localArgs * la, uint32_t ohN)
     for(unsigned int vfatN = 0; vfatN < oh::VFATS_PER_OH; vfatN++)
     {
         char regBase [100];
-        sprintf(regBase, "GEM_AMC.OH_LINKS.OH%i.VFAT%i.",ohN, vfatN);
+        sprintf(regBase, "GEM_AMC.OH.OH%i.GEB.VFAT%i.",ohN, vfatN);
         for (auto &reg : regs) {
             regName = std::string(regBase)+reg;
             la->response->set_word(regName,readReg(la,regName));
@@ -479,9 +479,11 @@ void statusVFAT3s(const RPCMsg *request, RPCMsg *response)
     GETLOCALARGS(response);
 
     uint32_t ohN = request->get_word("ohN");
-    LOGGER->log_message(LogManager::INFO, "Reading VFAT3 status");
+    LOGGER->log_message(LogManager::INFO, "Reading VFAT3 status...");
 
     statusVFAT3sLocal(&la, ohN);
+
+    LOGGER->log_message(LogManager::INFO, "Done VFAT3 status");
     rtxn.abort();
 }
 
