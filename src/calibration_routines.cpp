@@ -9,31 +9,32 @@
 #include "vfat3.h"
 #include "hw_constants.h"
 
-std::unordered_map<uint32_t, uint32_t> setSingleChanMask(unsigned int ohN, unsigned int vfatN, unsigned int ch, localArgs *la)
+using namespace std::string_literals;
+
+std::unordered_map<std::string, uint32_t> setSingleChanMask(unsigned int ohN, unsigned int vfatN, unsigned int ch, localArgs *la)
 {
-    char regBuf[200];
-    std::unordered_map<uint32_t, uint32_t> map_chanOrigMask; //key -> reg addr; val -> reg value
-    uint32_t chanMaskAddr;
+    std::unordered_map<std::string, uint32_t> map_chanOrigMask;
+
     for (unsigned int chan=0; chan<128; ++chan) { //Loop Over All Channels
         uint32_t chMask = 1;
-        if ( ch == chan) { //Do not mask the channel of interest
+        if ( ch == chan) //Do not mask the channel of interest
             chMask = 0;
-        }
+
         //store the original channel mask
-        sprintf(regBuf, "GEM_AMC.OH.OH%i.GEB.VFAT%i.VFAT_CHANNELS.CHANNEL%i.MASK",ohN,vfatN,chan);
-        chanMaskAddr=getAddress(la, regBuf);
-        map_chanOrigMask[chanMaskAddr]=readReg(la, regBuf);
+        const std::string reg = "GEM_AMC.OH.OH"s + std::to_string(ohN) + ".GEB.VFAT" + std::to_string(vfatN) + ".VFAT_CHANNELS.CHANNEL" + std::to_string(chan) + ".MASK";
+        map_chanOrigMask[reg] = readReg(la, reg);
 
         //write the new channel mask
-        writeRawAddress(chanMaskAddr, chMask, la->response);
-    } //End Loop Over all Channels
+        writeReg(la, reg, chMask);
+    }
+
     return map_chanOrigMask;
 }
 
-void applyChanMask(std::unordered_map<uint32_t, uint32_t> map_chanOrigMask, localArgs *la)
+void applyChanMask(std::unordered_map<std::string, uint32_t> map_chanOrigMask, localArgs *la)
 {
     for (auto chanPtr = map_chanOrigMask.begin(); chanPtr != map_chanOrigMask.end(); ++chanPtr) {
-        writeRawAddress( (*chanPtr).first, (*chanPtr).second, la->response);
+        writeReg(la, (*chanPtr).first, (*chanPtr).second);
     }
 }
 
@@ -561,7 +562,7 @@ void sbitRateScanLocal(localArgs *la, uint32_t *outDataDacVal, uint32_t *outData
 
             //If ch!=128 store the original channel mask settings
             //Then mask all other channels except for channel ch
-            std::unordered_map<uint32_t, uint32_t> map_chanOrigMask; //key -> reg addr; val -> reg value
+            std::unordered_map<std::string, uint32_t> map_chanOrigMask; //key -> reg addr; val -> reg value
             if ( ch != 128) map_chanOrigMask = setSingleChanMask(ohN,vfatN,ch,la);
 
             //Get the OH Rate Monitor Address
@@ -618,7 +619,7 @@ void sbitRateScanParallelLocal(localArgs *la, uint32_t *outDataDacVal, uint32_t 
          return;
     }
     uint32_t vfatmask[amc::OH_PER_AMC] = {0};
-    std::unordered_map<uint32_t, uint32_t> origVFATmasks[amc::OH_PER_AMC][oh::VFATS_PER_OH];
+    std::unordered_map<std::string, uint32_t> origVFATmasks[amc::OH_PER_AMC][oh::VFATS_PER_OH];
     switch (fw_version_check("SBIT Rate Scan", la)){
         case 3:
         {
