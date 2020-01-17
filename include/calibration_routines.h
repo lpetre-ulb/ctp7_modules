@@ -54,22 +54,22 @@ struct vfat3DACAndSize{
     }
 };
 
-/*! \fn std::unordered_map<uint32_t, uint32_t> setSingleChanMask(unsigned int ohN, int vfatN, unsigned int ch, localArgs *la)
+/*! \fn std::unordered_map<std::string, uint32_t> setSingleChanMask(unsigned int ohN, int vfatN, unsigned int ch, localArgs *la)
  *  \brief Unmask the channel of interest and masks all the other
  *  \param ohN Optical link number
  *  \param vfatN VFAT position
  *  \param ch Channel of interest
  *  \param la Local arguments structure
- *  \return Original channel mask in a form of an unordered map <chanMaskAddr, mask>
+ *  \return Original channel mask in a form of an unordered map <chanMaskRegName, mask>
  */
-std::unordered_map<uint32_t, uint32_t> setSingleChanMask(unsigned int ohN, int vfatN, unsigned int ch, localArgs *la);
+std::unordered_map<std::string, uint32_t> setSingleChanMask(unsigned int ohN, int vfatN, unsigned int ch, localArgs *la);
 
-/*! \fn void applyChanMask(std::unordered_map<uint32_t, uint32_t> map_chanOrigMask, localArgs *la)
+/*! \fn void applyChanMask(std::unordered_map<std::string, uint32_t> map_chanOrigMask, localArgs *la)
  *  \brief Applies channel mask
  *  \param map_chanOrigMask Original channel mask as obtained from setSingleChanMask mehod
  *  \param la Local arguments structure
  */
-void applyChanMask(std::unordered_map<uint32_t, uint32_t> map_chanOrigMask, localArgs *la);
+void applyChanMask(std::unordered_map<std::string, uint32_t> map_chanOrigMask, localArgs *la);
 
 /*! \fn void confCalPulseLocal(localArgs *la, uint32_t ohN, uint32_t mask, uint32_t ch, bool toggleOn, bool currentPulse, uint32_t calScaleFactor)
  *  \brief Configures the calibration pulse for channel ch on all VFATs of ohN that are not in mask to either be on (toggleOn==true) or off (toggleOn==false).  If ch == 128 and toggleOn == False will write the CALPULSE_ENABLE bit for all channels of all vfats that are not masked on ohN to 0x0.
