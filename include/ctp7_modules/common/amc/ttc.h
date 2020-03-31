@@ -55,7 +55,7 @@ namespace amc {
      */
     struct ttcMMCMPhaseShift : public xhal::common::rpc::Method
     {
-      void operator()(bool relock=false, bool modeBC0=false, bool scan=false) const;
+      void operator()(const bool& relock=false, const bool& modeBC0=false, const bool& scan=false) const;
     };
 
     /*!
@@ -67,7 +67,7 @@ namespace amc {
      */
     struct checkPLLLock : public xhal::common::rpc::Method
     {
-      std::uint32_t operator()(const std::uint32_t readAttempts) const;
+      uint32_t operator()(const uint32_t& readAttempts) const;
     };
 
     /*!
@@ -81,7 +81,7 @@ namespace amc {
      */
     struct getMMCMPhaseMean : public xhal::common::rpc::Method
     {
-      float operator()(const std::uint32_t readAttempts) const;
+      float operator()(const uint32_t& readAttempts) const;
     };
 
     /*!
@@ -95,7 +95,7 @@ namespace amc {
      */
     struct getGTHPhaseMean : public xhal::common::rpc::Method
     {
-      float operator()(const std::uint32_t readAttempts) const;
+      float operator()(const uint32_t& readAttempts) const;
     };
 
     /*!
@@ -107,7 +107,7 @@ namespace amc {
      */
     struct getMMCMPhaseMedian : public xhal::common::rpc::Method
     {
-      float operator()(const std::uint32_t readAttempts) const;
+      float operator()(const uint32_t& readAttempts) const;
     };
 
     /*!
@@ -119,7 +119,7 @@ namespace amc {
      */
     struct getGTHPhaseMedian : public xhal::common::rpc::Method
     {
-      float operator()(const std::uint32_t readAttempts) const;
+      float operator()(const uint32_t& readAttempts) const;
     };
 
     /*!
@@ -143,7 +143,7 @@ namespace amc {
      */
     struct setL1AEnable : public xhal::common::rpc::Method
     {
-      void operator()(bool enable=true) const;
+      void operator()(const bool& enable=true) const;
     };
 
     /*** CONFIG submodule ***/
@@ -154,7 +154,7 @@ namespace amc {
      */
     struct getTTCConfig : public xhal::common::rpc::Method
     {
-      uint32_t operator()(uint8_t const& cmd) const;
+      uint32_t operator()(const uint8_t& cmd) const;
     };
 
     /*!
@@ -162,7 +162,7 @@ namespace amc {
      */
     struct setTTCConfig : public xhal::common::rpc::Method
     {
-      void operator()(uint8_t const& cmd, uint8_t const& value) const;
+      void operator()(const uint8_t& cmd, const uint8_t& value) const;
     };
 
     /*** STATUS submodule ***/
@@ -181,7 +181,7 @@ namespace amc {
      */
     struct getTTCErrorCount : public xhal::common::rpc::Method
     {
-      uint32_t operator()(bool const& single=true) const;
+      uint32_t operator()(const bool& single=true) const;
     };
 
     /*** CMD_COUNTERS submodule ***/
@@ -192,7 +192,7 @@ namespace amc {
      */
     struct getTTCCounter : public xhal::common::rpc::Method
     {
-      uint32_t operator()(uint8_t const& cmd) const;
+      uint32_t operator()(const uint8_t& cmd) const;
     };
 
     /*!

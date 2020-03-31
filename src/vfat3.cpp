@@ -26,7 +26,7 @@ namespace vfat3 {
   auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("logger"));
 }
 
-uint16_t vfat3::decodeChipID(const uint32_t &encChipID)
+uint16_t vfat3::decodeChipID(const uint32_t& encChipID)
 {
   // can the generator be static to limit creation/destruction of resources?
   static reedmuller rm = 0;
@@ -96,7 +96,7 @@ uint16_t vfat3::decodeChipID(const uint32_t &encChipID)
   }
 }
 
-uint32_t vfat3::vfatSyncCheck::operator()(const uint16_t &ohN, const uint32_t &mask) const
+uint32_t vfat3::vfatSyncCheck::operator()(const uint16_t& ohN, const uint32_t& mask) const
 {
   uint32_t goodVFATs = 0;
   for (size_t vfatN = 0; vfatN < oh::VFATS_PER_OH; ++vfatN) {
@@ -122,7 +122,7 @@ uint32_t vfat3::vfatSyncCheck::operator()(const uint16_t &ohN, const uint32_t &m
   return goodVFATs;
 }
 
-void vfat3::configureVFAT3DACMonitor::operator()(const uint16_t &ohN, const uint32_t &mask, const uint32_t &dacSelect) const
+void vfat3::configureVFAT3DACMonitor::operator()(const uint16_t& ohN, const uint32_t& mask, const uint32_t& dacSelect) const
 {
   LOG4CPLUS_INFO(logger, "Programming VFAT3 ADC Monitoring for DAC " << dacSelect);
 
@@ -159,7 +159,7 @@ void vfat3::configureVFAT3DACMonitor::operator()(const uint16_t &ohN, const uint
   return;
 }
 
-void vfat3::configureVFAT3DACMonitorMultiLink::operator()(const uint16_t &ohMask, const std::array<uint32_t, amc::OH_PER_AMC> & vfatMasks, const uint32_t &dacSelect) const
+void vfat3::configureVFAT3DACMonitorMultiLink::operator()(const uint16_t& ohMask, const std::array<uint32_t, amc::OH_PER_AMC>& vfatMasks, const uint32_t& dacSelect) const
 {
   const uint32_t supOH = utils::readReg("GEM_AMC.GEM_SYSTEM.CONFIG.NUM_OF_OH");
   if (ohMask > (0x1<<supOH))
@@ -180,7 +180,7 @@ void vfat3::configureVFAT3DACMonitorMultiLink::operator()(const uint16_t &ohMask
   return;
 }
 
-void vfat3::configureVFAT3s::operator()(const uint16_t &ohN, const uint32_t &vfatMask) const
+void vfat3::configureVFAT3s::operator()(const uint16_t& ohN, const uint32_t& vfatMask) const
 {
   const uint32_t notmask   = ~vfatMask & 0xFFFFFF;
   const uint32_t goodVFATs = vfatSyncCheck{}(ohN);
@@ -227,7 +227,7 @@ void vfat3::configureVFAT3s::operator()(const uint16_t &ohN, const uint32_t &vfa
   }
 }
 
-std::vector<uint32_t> vfat3::getChannelRegistersVFAT3::operator()(const uint16_t &ohN, const uint32_t &vfatMask) const
+std::vector<uint32_t> vfat3::getChannelRegistersVFAT3::operator()(const uint16_t& ohN, const uint32_t& vfatMask) const
 {
   LOG4CPLUS_INFO(logger, "Read channel register settings");
 
@@ -273,7 +273,7 @@ std::vector<uint32_t> vfat3::getChannelRegistersVFAT3::operator()(const uint16_t
   return chanRegData;
 }
 
-std::vector<uint32_t> vfat3::readVFAT3ADC::operator()(const uint16_t &ohN, const bool &useExtRefADC, const uint32_t &vfatMask) const
+std::vector<uint32_t> vfat3::readVFAT3ADC::operator()(const uint16_t& ohN, const bool& useExtRefADC, const uint32_t& vfatMask) const
 {
   LOG4CPLUS_INFO(logger, "Reading VFAT3 ADCs for OH" << ohN << " using VFAT mask 0x" << std::hex << std::setw(8) << std::setfill('0') << vfatMask << std::dec);
   // std::vector<uint32_t> data(oh::VFATS_PER_OH);
@@ -288,7 +288,7 @@ std::vector<uint32_t> vfat3::readVFAT3ADC::operator()(const uint16_t &ohN, const
   }
 }
 
-std::map<uint32_t,std::vector<uint32_t>> vfat3::readVFAT3ADCMultiLink::operator()(const uint16_t &ohMask, const bool &useExtRefADC) const
+std::map<uint32_t,std::vector<uint32_t>> vfat3::readVFAT3ADCMultiLink::operator()(const uint16_t& ohMask, const bool& useExtRefADC) const
 {
   const uint32_t supOH = utils::readReg("GEM_AMC.GEM_SYSTEM.CONFIG.NUM_OF_OH");
   if (ohMask > (0x1<<supOH))
@@ -308,7 +308,7 @@ std::map<uint32_t,std::vector<uint32_t>> vfat3::readVFAT3ADCMultiLink::operator(
   return adcData;
 }
 
-void vfat3::setChannelRegistersVFAT3Simple::operator()(const uint16_t &ohN, const std::vector<uint32_t> &chanRegData, const uint32_t &vfatMask) const
+void vfat3::setChannelRegistersVFAT3Simple::operator()(const uint16_t& ohN, const std::vector<uint32_t> &chanRegData, const uint32_t& vfatMask) const
 {
   const uint32_t notmask = ~vfatMask & 0xFFFFFF;
 
@@ -352,14 +352,14 @@ void vfat3::setChannelRegistersVFAT3Simple::operator()(const uint16_t &ohN, cons
   return;
 }
 
-void vfat3::setChannelRegistersVFAT3::operator()(const uint16_t &ohN,
-                                                 const std::vector<uint32_t> &calEnable,
-                                                 const std::vector<uint32_t> &masks,
-                                                 const std::vector<uint32_t> &trimARM,
-                                                 const std::vector<uint32_t> &trimARMPol,
-                                                 const std::vector<uint32_t> &trimZCC,
-                                                 const std::vector<uint32_t> &trimZCCPol,
-                                                 const uint32_t &vfatMask) const
+void vfat3::setChannelRegistersVFAT3::operator()(const uint16_t& ohN,
+                                                 const std::vector<uint32_t>& calEnable,
+                                                 const std::vector<uint32_t>& masks,
+                                                 const std::vector<uint32_t>& trimARM,
+                                                 const std::vector<uint32_t>& trimARMPol,
+                                                 const std::vector<uint32_t>& trimZCC,
+                                                 const std::vector<uint32_t>& trimZCCPol,
+                                                 const uint32_t& vfatMask) const
 {
   const uint32_t notmask = ~vfatMask & 0xFFFFFF;
 
@@ -430,7 +430,7 @@ void vfat3::setChannelRegistersVFAT3::operator()(const uint16_t &ohN,
   return;
 }
 
-std::map<std::string, std::vector<uint32_t>> vfat3::statusVFAT3s::operator()(const uint16_t &ohN) const
+std::map<std::string, std::vector<uint32_t>> vfat3::statusVFAT3s::operator()(const uint16_t& ohN) const
 {
   std::string regs [] = {
     "CFG_PULSE_STRETCH",
@@ -478,7 +478,7 @@ std::map<std::string, std::vector<uint32_t>> vfat3::statusVFAT3s::operator()(con
   return values;
 }
 
-std::vector<uint32_t> vfat3::getVFAT3ChipIDs::operator()(const uint16_t &ohN, const uint32_t &vfatMask, const bool &rawID) const
+std::vector<uint32_t> vfat3::getVFAT3ChipIDs::operator()(const uint16_t& ohN, const uint32_t& vfatMask, const bool& rawID) const
 {
   const uint32_t notmask   = ~vfatMask & 0xFFFFFF;
   const uint32_t goodVFATs = vfatSyncCheck{}(ohN);

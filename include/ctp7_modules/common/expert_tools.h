@@ -13,11 +13,11 @@ namespace expert {
      *  \brief Reads a value from remote address. An \c std::runtime_error is thrown if the register cannot be read.
      *
      *  \param \c address Register address
-     *  \returns \c std::uint32_t register value
+     *  \returns \c uint32_t register value
      */
     struct readRawAddress : public xhal::common::rpc::Method
     {
-        std::uint32_t operator()(const std::uint32_t &address) const;
+        uint32_t operator()(const uint32_t& address) const;
     };
 
     /*!
@@ -28,7 +28,7 @@ namespace expert {
      */
     struct writeRawAddress : public xhal::common::rpc::Method
     {
-        void operator()(const std::uint32_t &address, const std::uint32_t &value) const;
+        void operator()(const uint32_t& address, const uint32_t& value) const;
     };
 }
 #endif

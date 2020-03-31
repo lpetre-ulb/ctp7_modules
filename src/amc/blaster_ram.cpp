@@ -20,7 +20,7 @@ namespace amc {
   }
 }
 
-uint32_t amc::blaster::getRAMMaxSize::operator()(BLASTERType const& type) const
+uint32_t amc::blaster::getRAMMaxSize::operator()(const BLASTERType& type) const
 {
   uint32_t ram_size = 0x0;
   switch (type) {
@@ -48,14 +48,14 @@ uint32_t amc::blaster::getRAMMaxSize::operator()(BLASTERType const& type) const
   // return ram_size;
 }
 
-bool amc::blaster::checkBLOBSize(BLASTERType const& type, size_t const& sz)
+bool amc::blaster::checkBLOBSize(const BLASTERType& type, const size_t& sz)
 {
   uint32_t ram_sz = getRAMMaxSize{}(type);
   bool valid = (sz == ram_sz) ? true : false;
   return valid;
 }
 
-uint32_t amc::blaster::getRAMBaseAddr(BLASTERType const& type, uint8_t const& ohN, uint8_t const& partN)
+uint32_t amc::blaster::getRAMBaseAddr(const BLASTERType& type, const uint8_t& ohN, const uint8_t& partN)
 {
   uint32_t base = 0x0;
   std::string regName;
@@ -106,7 +106,7 @@ uint32_t amc::blaster::getRAMBaseAddr(BLASTERType const& type, uint8_t const& oh
   throw std::runtime_error(errmsg.str());
 }
 
-std::vector<uint32_t> amc::blaster::readConfRAM::operator()(BLASTERType const& type, size_t const& blob_sz) const
+std::vector<uint32_t> amc::blaster::readConfRAM::operator()(const BLASTERType& type, const size_t& blob_sz) const
 {
   uint32_t nwords = 0x0;
   // uint32_t offset = 0x0;
@@ -172,7 +172,7 @@ std::vector<uint32_t> amc::blaster::readConfRAM::operator()(BLASTERType const& t
   return blob;
 }
 
-std::vector<uint32_t> amc::blaster::readGBTConfRAM::operator()(const uint16_t &ohMask) const
+std::vector<uint32_t> amc::blaster::readGBTConfRAM::operator()(const uint16_t& ohMask) const
 {
   LOG4CPLUS_DEBUG(logger, "readGBTConfRAM called");
 
@@ -202,7 +202,7 @@ std::vector<uint32_t> amc::blaster::readGBTConfRAM::operator()(const uint16_t &o
   }
 }
 
-std::vector<uint32_t> amc::blaster::readOptoHybridConfRAM::operator()(const uint16_t &ohMask) const
+std::vector<uint32_t> amc::blaster::readOptoHybridConfRAM::operator()(const uint16_t& ohMask) const
 {
   LOG4CPLUS_DEBUG(logger, "readOptoHybridConfRAM called");
 
@@ -232,7 +232,7 @@ std::vector<uint32_t> amc::blaster::readOptoHybridConfRAM::operator()(const uint
   }
 }
 
-std::vector<uint32_t> amc::blaster::readVFATConfRAM::operator()(const uint16_t &ohMask) const
+std::vector<uint32_t> amc::blaster::readVFATConfRAM::operator()(const uint16_t& ohMask) const
 {
   LOG4CPLUS_DEBUG(logger, "readVFATConfRAM called");
 
@@ -262,7 +262,7 @@ std::vector<uint32_t> amc::blaster::readVFATConfRAM::operator()(const uint16_t &
   }
 }
 
-void amc::blaster::writeConfRAM::operator()(BLASTERType const& type, std::vector<uint32_t> blob) const
+void amc::blaster::writeConfRAM::operator()(const BLASTERType& type, const std::vector<uint32_t>& blob) const
 {
   if (!checkBLOBSize(type, blob.size())) {
     std::stringstream errmsg;
@@ -324,7 +324,7 @@ void amc::blaster::writeConfRAM::operator()(BLASTERType const& type, std::vector
   }
 }
 
-void amc::blaster::writeGBTConfRAM::operator()(const std::vector<uint32_t> &gbtblob, const uint16_t &ohMask) const
+void amc::blaster::writeGBTConfRAM::operator()(const std::vector<uint32_t>& gbtblob, const uint16_t& ohMask) const
 {
   LOG4CPLUS_DEBUG(logger, "writeGBTConfRAM called");
 
@@ -353,7 +353,7 @@ void amc::blaster::writeGBTConfRAM::operator()(const std::vector<uint32_t> &gbtb
   return;
 }
 
-void amc::blaster::writeOptoHybridConfRAM::operator()(const std::vector<uint32_t> &ohblob, const uint16_t &ohMask) const
+void amc::blaster::writeOptoHybridConfRAM::operator()(const std::vector<uint32_t>& ohblob, const uint16_t& ohMask) const
 {
   LOG4CPLUS_DEBUG(logger, "writeOptoHybridConfRAM called");
 
@@ -382,7 +382,7 @@ void amc::blaster::writeOptoHybridConfRAM::operator()(const std::vector<uint32_t
   return;
 }
 
-void amc::blaster::writeVFATConfRAM::operator()(const std::vector<uint32_t> &vfatblob, const uint16_t &ohMask) const
+void amc::blaster::writeVFATConfRAM::operator()(const std::vector<uint32_t>& vfatblob, const uint16_t& ohMask) const
 {
   LOG4CPLUS_DEBUG(logger, "writeVFATConfRAM called");
 

@@ -36,7 +36,7 @@ std::map<std::string, uint32_t> daqmon::getmonTTCmain::operator()() const
   return ttcMon;
 }
 
-std::map<std::string, uint32_t> daqmon::getmonTRIGGERmain::operator()(const uint16_t &ohMask) const
+std::map<std::string, uint32_t> daqmon::getmonTRIGGERmain::operator()(const uint16_t& ohMask) const
 {
   const uint32_t supOH = utils::readReg("GEM_AMC.GEM_SYSTEM.CONFIG.NUM_OF_OH");
   if (ohMask > (0x1<<supOH))
@@ -59,7 +59,7 @@ std::map<std::string, uint32_t> daqmon::getmonTRIGGERmain::operator()(const uint
   return trigMon;
 }
 
-std::map<std::string, uint32_t> daqmon::getmonTRIGGEROHmain::operator()(const uint16_t &ohMask) const
+std::map<std::string, uint32_t> daqmon::getmonTRIGGEROHmain::operator()(const uint16_t& ohMask) const
 {
   const uint32_t supOH = utils::readReg("GEM_AMC.GEM_SYSTEM.CONFIG.NUM_OF_OH");
   if (ohMask > (0x1<<supOH))
@@ -115,7 +115,7 @@ std::map<std::string, uint32_t> daqmon::getmonDAQmain::operator()() const
   return daqMon;
 }
 
-std::map<std::string, uint32_t> daqmon::getmonDAQOHmain::operator()(const uint16_t &ohMask) const
+std::map<std::string, uint32_t> daqmon::getmonDAQOHmain::operator()(const uint16_t& ohMask) const
 {
   const uint32_t supOH = utils::readReg("GEM_AMC.GEM_SYSTEM.CONFIG.NUM_OF_OH");
   if (ohMask > (0x1<<supOH))
@@ -148,7 +148,7 @@ std::map<std::string, uint32_t> daqmon::getmonDAQOHmain::operator()(const uint16
   return daqMon;
 }
 
-std::map<std::string, uint32_t> daqmon::getmonGBTLink::operator()(const bool &doReset) const
+std::map<std::string, uint32_t> daqmon::getmonGBTLink::operator()(const bool& doReset) const
 {
   if (doReset) {
     utils::writeReg("GEM_AMC.GEM_SYSTEM.CTRL.LINK_RESET", 0x1);
@@ -180,7 +180,7 @@ std::map<std::string, uint32_t> daqmon::getmonGBTLink::operator()(const bool &do
   return gbtMon;
 }
 
-std::map<std::string, uint32_t> daqmon::getmonOHmain::operator()(const uint16_t &ohMask) const
+std::map<std::string, uint32_t> daqmon::getmonOHmain::operator()(const uint16_t& ohMask) const
 {
   const uint32_t supOH = utils::readReg("GEM_AMC.GEM_SYSTEM.CONFIG.NUM_OF_OH");
   if (ohMask > (0x1<<supOH))
@@ -232,7 +232,7 @@ std::map<std::string, uint32_t> daqmon::getmonOHmain::operator()(const uint16_t 
   return ohMon;
 }
 
-std::map<std::string, uint32_t> daqmon::getmonOHSCAmain::operator()(const uint16_t &ohMask) const
+std::map<std::string, uint32_t> daqmon::getmonOHSCAmain::operator()(const uint16_t& ohMask) const
 {
   uint32_t initSCAMonOffMask = 0xffffffff;
   if (!utils::regExists("GEM_AMC.SLOW_CONTROL.SCA.ADC_MONITORING.MONITORING_OFF").empty()) {
@@ -296,7 +296,7 @@ std::map<std::string, uint32_t> daqmon::getmonOHSCAmain::operator()(const uint16
   return scaMon;
 }
 
-std::map<std::string, uint32_t> daqmon::getmonOHSysmon::operator()(const uint16_t &ohMask, const bool &doReset) const
+std::map<std::string, uint32_t> daqmon::getmonOHSysmon::operator()(const uint16_t& ohMask, const bool& doReset) const
 {
   const uint32_t supOH = utils::readReg("GEM_AMC.GEM_SYSTEM.CONFIG.NUM_OF_OH");
   if (ohMask > (0x1<<supOH))
@@ -391,7 +391,7 @@ std::map<std::string, uint32_t> daqmon::getmonSCA::operator()() const
   return scaMon;
 }
 
-std::map<std::string, uint32_t> daqmon::getmonVFATLink::operator()(const bool &doReset) const
+std::map<std::string, uint32_t> daqmon::getmonVFATLink::operator()(const bool& doReset) const
 {
   if (doReset) {
     utils::writeReg("GEM_AMC.GEM_SYSTEM.CTRL.LINK_RESET", 0x1);
@@ -427,7 +427,7 @@ std::map<std::string, uint32_t> daqmon::getmonVFATLink::operator()(const bool &d
   return vfatMon;
 }
 
-std::map<std::string, uint32_t> daqmon::getmonCTP7dump::operator()(const std::string &fname) const
+std::map<std::string, uint32_t> daqmon::getmonCTP7dump::operator()(const std::string& fname) const
 {
   LOG4CPLUS_INFO(logger, "Using registers found in: " << fname);
   std::ifstream ifs(fname);

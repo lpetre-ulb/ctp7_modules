@@ -35,7 +35,7 @@ namespace daqmon {
    */
   struct getmonTRIGGERmain : xhal::common::rpc::Method
   {
-    std::map<std::string, uint32_t> operator()(const uint16_t &ohMask=0xfff) const;
+    std::map<std::string, uint32_t> operator()(const uint16_t& ohMask=0xfff) const;
   };
 
   /*!
@@ -61,7 +61,7 @@ namespace daqmon {
    */
   struct getmonTRIGGEROHmain : xhal::common::rpc::Method
   {
-    std::map<std::string, uint32_t> operator()(const uint16_t &ohMask=0xfff) const;
+    std::map<std::string, uint32_t> operator()(const uint16_t& ohMask=0xfff) const;
   };
 
   /*!
@@ -84,7 +84,7 @@ namespace daqmon {
    */
   struct getmonDAQOHmain : xhal::common::rpc::Method
   {
-    std::map<std::string, uint32_t> operator()(const uint16_t &ohMask=0xfff) const;
+    std::map<std::string, uint32_t> operator()(const uint16_t& ohMask=0xfff) const;
   };
 
   /*!
@@ -96,7 +96,7 @@ namespace daqmon {
    */
   struct getmonGBTLink : xhal::common::rpc::Method
   {
-    std::map<std::string, uint32_t> operator()(const bool &doReset=false) const;
+    std::map<std::string, uint32_t> operator()(const bool& doReset=false) const;
   };
 
   /*!
@@ -109,7 +109,7 @@ namespace daqmon {
    */
   struct getmonOHmain : xhal::common::rpc::Method
   {
-    std::map<std::string, uint32_t> operator()(const uint16_t &ohMask=0xfff) const;
+    std::map<std::string, uint32_t> operator()(const uint16_t& ohMask=0xfff) const;
   };
 
   /*!
@@ -125,7 +125,7 @@ namespace daqmon {
   struct [[deprecated]] getmonOHSCAmain : xhal::common::rpc::Method
   {
     // __attribute__((__deprecated__))
-    std::map<std::string, uint32_t> operator()(const uint16_t &ohMask=0xfff) const;
+    std::map<std::string, uint32_t> operator()(const uint16_t& ohMask=0xfff) const;
   };
 
   /*!
@@ -144,7 +144,7 @@ namespace daqmon {
    */
   struct getmonOHSysmon : xhal::common::rpc::Method
   {
-    std::map<std::string, uint32_t> operator()(const uint16_t &ohMask=0xfff, const bool &doReset=false) const;
+    std::map<std::string, uint32_t> operator()(const uint16_t& ohMask=0xfff, const bool& doReset=false) const;
   };
 
   /*!
@@ -166,7 +166,7 @@ namespace daqmon {
    */
   struct getmonVFATLink : xhal::common::rpc::Method
   {
-    std::map<std::string, uint32_t> operator()(const bool &doReset=false) const;
+    std::map<std::string, uint32_t> operator()(const bool& doReset=false) const;
   };
 
   /*!

@@ -17,7 +17,7 @@
 
 memsvc_handle_t memsvc;
 
-std::vector<std::string> utils::split(const std::string &s, char delim)
+std::vector<std::string> utils::split(const std::string& s, char delim)
 {
   std::vector<std::string> elems;
   split(s, delim, std::back_inserter(elems));
@@ -65,7 +65,7 @@ void utils::initLogging()
     }
 }
 
-void utils::update_address_table::operator()(const std::string &at_xml) const
+void utils::update_address_table::operator()(const std::string& at_xml) const
 {
   auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("logger"));
   LOG4CPLUS_INFO(logger, "START UPDATE ADDRESS TABLE");
@@ -140,7 +140,7 @@ uint32_t utils::getNumNonzeroBits(uint32_t value)
   return numNonzeroBits;
 }
 
-std::vector<std::string> utils::regExists(const std::string &regName)
+std::vector<std::string> utils::regExists(const std::string& regName)
 {
   auto env = lmdb::env::create();
   env.set_mapsize(utils::LMDB_SIZE);
@@ -161,7 +161,7 @@ std::vector<std::string> utils::regExists(const std::string &regName)
   }
 }
 
-uint32_t utils::getAddress(const std::string &regName)
+uint32_t utils::getAddress(const std::string& regName)
 {
   auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("logger"));
 
@@ -178,7 +178,7 @@ uint32_t utils::getAddress(const std::string &regName)
   return raddr;
 }
 
-uint32_t utils::getMask(const std::string &regName)
+uint32_t utils::getMask(const std::string& regName)
 {
   auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("logger"));
 
@@ -237,13 +237,13 @@ uint32_t utils::readRawAddress(const uint32_t address)
   return data[0];
 }
 
-void utils::writeRawReg(const std::string &regName, const uint32_t value)
+void utils::writeRawReg(const std::string& regName, const uint32_t value)
 {
   const auto addr = utils::getAddress(regName);
   return utils::writeRawAddress(addr, value);
 }
 
-uint32_t utils::readRawReg(const std::string &regName)
+uint32_t utils::readRawReg(const std::string& regName)
 {
   const auto addr = utils::getAddress(regName);
   return utils::readRawAddress(addr);
@@ -263,7 +263,7 @@ uint32_t utils::applyMask(const uint32_t data, uint32_t mask)
   return result;
 }
 
-uint32_t utils::readReg(const std::string &regName)
+uint32_t utils::readReg(const std::string& regName)
 {
   auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("logger"));
 
@@ -293,7 +293,7 @@ uint32_t utils::readReg(const std::string &regName)
   }
 }
 
-uint32_t utils::readBlock(const std::string &regName, uint32_t *result, const uint32_t &size, const uint32_t &offset)
+uint32_t utils::readBlock(const std::string& regName, uint32_t *result, const uint32_t& size, const uint32_t& offset)
 {
   auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("logger"));
 
@@ -351,13 +351,13 @@ uint32_t utils::readBlock(const std::string &regName, uint32_t *result, const ui
   return 0;
 }
 
-uint32_t utils::readBlock(const uint32_t &regAddr, uint32_t *result, const uint32_t &size, const uint32_t &offset)
+uint32_t utils::readBlock(const uint32_t& regAddr, uint32_t *result, const uint32_t& size, const uint32_t& offset)
 {
   // Might not make sense, as it would be impossible to do any validation at this level
   return 0;
 }
 
-utils::SlowCtrlErrCntVFAT utils::repeatedRegRead(const std::string &regName, const bool breakOnFailure, const uint32_t nReads)
+utils::SlowCtrlErrCntVFAT utils::repeatedRegRead(const std::string& regName, const bool breakOnFailure, const uint32_t nReads)
 {
     // Issue a link reset to reset counters under GEM_AMC.SLOW_CONTROL.VFAT3
     writeReg("GEM_AMC.GEM_SYSTEM.CTRL.LINK_RESET", 0x1);
@@ -389,7 +389,7 @@ utils::SlowCtrlErrCntVFAT utils::repeatedRegRead(const std::string &regName, con
     return vfatErrs;
 }
 
-void utils::writeReg(const std::string &regName, const uint32_t value)
+void utils::writeReg(const std::string& regName, const uint32_t value)
 {
   auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("logger"));
 
@@ -423,7 +423,7 @@ void utils::writeReg(const std::string &regName, const uint32_t value)
   }
 }
 
-void utils::writeBlock(const std::string &regName, const uint32_t *values, const uint32_t &size, const uint32_t &offset)
+void utils::writeBlock(const std::string& regName, const uint32_t* values, const uint32_t& size, const uint32_t& offset)
 {
   auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("logger"));
 
@@ -477,7 +477,7 @@ void utils::writeBlock(const std::string &regName, const uint32_t *values, const
   }
 }
 
-void utils::writeBlock(const uint32_t &regAddr, const uint32_t *values, const uint32_t &size, const uint32_t &offset)
+void utils::writeBlock(const uint32_t& regAddr, const uint32_t* values, const uint32_t& size, const uint32_t& offset)
 {
   // This function doesn't make sense with an offset, why would we specify an offset when accessing by register address?
   // Maybe just to do validation checks on the size?
@@ -488,7 +488,7 @@ void utils::writeBlock(const uint32_t &regAddr, const uint32_t *values, const ui
  * Common methods implementation. These methods are exported as remote calls.
  */
 
-utils::RegInfo utils::readRegFromDB::operator()(const std::string &regName) const
+utils::RegInfo utils::readRegFromDB::operator()(const std::string& regName) const
 {
   auto env = lmdb::env::create();
   env.set_mapsize(utils::LMDB_SIZE);
@@ -537,12 +537,12 @@ utils::RegInfo utils::readRegFromDB::operator()(const std::string &regName) cons
   }
 }
 
-uint32_t utils::readRemoteReg::operator()(const std::string &regName) const
+uint32_t utils::readRemoteReg::operator()(const std::string& regName) const
 {
   return readReg(regName);
 }
 
-void utils::writeRemoteReg::operator()(const std::string &regName, const uint32_t value) const
+void utils::writeRemoteReg::operator()(const std::string& regName, const uint32_t& value) const
 {
   return writeReg(regName, value);
 }

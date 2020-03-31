@@ -160,7 +160,7 @@ namespace amc {
          */
         struct writeConfRAM : public xhal::common::rpc::Method
         {
-            void operator()(BLASTERType const& type, std::vector<uint32_t> blob) const;
+            void operator()(BLASTERType const& type, const std::vector<uint32_t>& blob) const;
         };
 
         /*!
@@ -186,7 +186,7 @@ namespace amc {
          */
         struct writeGBTConfRAM : public xhal::common::rpc::Method
         {
-          void operator()(const std::vector<uint32_t> &gbtblob, const uint16_t &ohMask=0xfff) const;
+          void operator()(const std::vector<uint32_t>& gbtblob, const uint16_t& ohMask=0xfff) const;
         };
 
         /*!
@@ -210,7 +210,7 @@ namespace amc {
          */
         struct writeOptoHybridConfRAM : public xhal::common::rpc::Method
         {
-            void operator()(const std::vector<uint32_t> &ohblob, const uint16_t &ohMask=0xfff) const;
+            void operator()(const std::vector<uint32_t>& ohblob, const uint16_t& ohMask=0xfff) const;
         };
 
 
@@ -236,7 +236,7 @@ namespace amc {
          */
         struct writeVFATConfRAM : public xhal::common::rpc::Method
         {
-          void operator()(const std::vector<uint32_t> &vfatblob, const uint16_t &ohMask=0xfff) const;
+          void operator()(const std::vector<uint32_t>& vfatblob, const uint16_t& ohMask=0xfff) const;
         };
     }
 }

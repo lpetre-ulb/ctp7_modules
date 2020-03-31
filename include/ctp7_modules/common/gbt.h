@@ -47,12 +47,12 @@ namespace gbt {
    */
   struct scanGBTPhases : public xhal::common::rpc::Method
   {
-    std::map<uint32_t, std::vector<uint32_t>> operator()(const uint32_t &ohN,
-                                                         const uint32_t &nResets=1,
-                                                         const uint8_t &phaseMin=gbt::PHASE_MIN,
-                                                         const uint8_t &phaseMax=gbt::PHASE_MAX,
-                                                         const uint8_t &phaseStep=1,
-                                                         const uint32_t &nVerificationReads=10) const;
+    std::map<uint32_t, std::vector<uint32_t>> operator()(const uint32_t& ohN,
+                                                         const uint32_t& nResets=1,
+                                                         const uint8_t& phaseMin=gbt::PHASE_MIN,
+                                                         const uint8_t& phaseMax=gbt::PHASE_MAX,
+                                                         const uint8_t& phaseStep=1,
+                                                         const uint32_t& nVerificationReads=10) const;
   };
 
   /*!
@@ -86,7 +86,7 @@ namespace gbt {
    */
   struct writeGBTConfig : public xhal::common::rpc::Method
   {
-    void operator()(const uint32_t &ohN, const uint32_t &gbtN, const config_t &config) const;
+    void operator()(const uint32_t& ohN, const uint32_t& gbtN, const config_t& config) const;
   };
 
   /*!
@@ -120,7 +120,7 @@ namespace gbt {
    */
   struct writeGBTPhase : public xhal::common::rpc::Method
   {
-    void operator()(const uint32_t &ohN, const uint32_t &vfatN, const uint8_t &phase) const;
+    void operator()(const uint32_t& ohN, const uint32_t& vfatN, const uint8_t& phase) const;
   };
 
 }

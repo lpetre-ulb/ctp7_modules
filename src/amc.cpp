@@ -43,7 +43,7 @@ uint32_t amc::fw_version_check(const char* caller_name)
     return fw_maj;
 }
 
-uint32_t amc::getOHVFATMask::operator()(const uint32_t &ohN) const
+uint32_t amc::getOHVFATMask::operator()(const uint32_t& ohN) const
 {
     uint32_t mask = 0x0;
     std::stringstream regName;
@@ -61,7 +61,7 @@ uint32_t amc::getOHVFATMask::operator()(const uint32_t &ohN) const
     return mask;
 }
 
-std::vector<uint32_t> amc::getOHVFATMaskMultiLink::operator()(const uint32_t &ohMask) const
+std::vector<uint32_t> amc::getOHVFATMaskMultiLink::operator()(const uint32_t& ohMask) const
 {
     const uint32_t supOH = utils::readReg("GEM_AMC.GEM_SYSTEM.CONFIG.NUM_OF_OH");
 
@@ -95,7 +95,7 @@ std::vector<uint32_t> amc::getOHVFATMaskMultiLink::operator()(const uint32_t &oh
     return vfatMasks;
 }
 
-std::vector<uint32_t> amc::sbitReadOut::operator()(const uint32_t &ohN, const uint32_t &acquireTime) const
+std::vector<uint32_t> amc::sbitReadOut::operator()(const uint32_t& ohN, const uint32_t& acquireTime) const
 {
     const int nclusters = 8;
     utils::writeReg("GEM_AMC.TRIGGER.SBIT_MONITOR.OH_SELECT", ohN);
@@ -159,7 +159,7 @@ std::vector<uint32_t> amc::sbitReadOut::operator()(const uint32_t &ohN, const ui
     return storedSbits;
 }
 
-std::map<std::string, uint32_t> amc::repeatedRegRead::operator()(const std::vector<std::string> &regList, const bool &breakOnFailure, const uint32_t &nReads) const
+std::map<std::string, uint32_t> amc::repeatedRegRead::operator()(const std::vector<std::string>& regList, const bool& breakOnFailure, const uint32_t& nReads) const
 {
     utils::SlowCtrlErrCntVFAT vfatErrs;
     for (auto const & regIter : regList) {

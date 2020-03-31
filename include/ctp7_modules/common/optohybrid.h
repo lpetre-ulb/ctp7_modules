@@ -25,7 +25,7 @@ namespace oh {
    */
   struct broadcastWrite : public xhal::common::rpc::Method
   {
-    void operator()(const uint32_t &ohN, const std::string &regName, const uint32_t &value, const uint32_t &mask=0xff000000) const;
+    void operator()(const uint32_t& ohN, const std::string& regName, const uint32_t& value, const uint32_t& mask=0xff000000) const;
   };
 
   /*!
@@ -39,7 +39,7 @@ namespace oh {
    */
   struct broadcastRead : public xhal::common::rpc::Method
   {
-    std::vector<uint32_t> operator()(const uint32_t &ohN, const std::string &regName, const uint32_t &mask=0xff000000) const;
+    std::vector<uint32_t> operator()(const uint32_t& ohN, const std::string& regName, const uint32_t& mask=0xff000000) const;
   };
 
   /*!
@@ -50,7 +50,7 @@ namespace oh {
    */
   struct biasAllVFATs : public xhal::common::rpc::Method
   {
-    void operator()(const uint32_t &ohN, const uint32_t &mask=0xff000000) const;
+    void operator()(const uint32_t& ohN, const uint32_t& mask=0xff000000) const;
   };
 
   /*!
@@ -61,7 +61,7 @@ namespace oh {
    */
   struct setAllVFATsToRunMode : public xhal::common::rpc::Method
   {
-    void operator()(const uint32_t &ohN, const uint32_t &mask=0xff000000) const;
+    void operator()(const uint32_t& ohN, const uint32_t& mask=0xff000000) const;
   };
 
   /*!
@@ -72,7 +72,7 @@ namespace oh {
    */
   struct setAllVFATsToSleepMode : public xhal::common::rpc::Method
   {
-    void operator()(const uint32_t &ohN, const uint32_t &mask=0xff000000) const;
+    void operator()(const uint32_t& ohN, const uint32_t& mask=0xff000000) const;
   };
 
   /*!
@@ -85,7 +85,7 @@ namespace oh {
    */
   struct statusOH : public xhal::common::rpc::Method
   {
-    std::map<std::string, std::vector<uint32_t>> operator()(const uint32_t &ohMask) const;
+    std::map<std::string, std::vector<uint32_t>> operator()(const uint32_t& ohMask) const;
   };
 
   /*!
@@ -98,7 +98,7 @@ namespace oh {
    */
   struct stopCalPulse2AllChannels : public xhal::common::rpc::Method
   {
-    void operator()(const uint32_t &ohN, const uint32_t &mask, const uint32_t &ch_min, const uint32_t &ch_max) const;
+    void operator()(const uint32_t& ohN, const uint32_t& mask, const uint32_t& ch_min, const uint32_t& ch_max) const;
   };
 
 }

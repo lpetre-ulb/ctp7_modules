@@ -19,7 +19,7 @@ namespace amc {
   }
 }
 
-uint32_t amc::sca::formatSCAData(uint32_t const& data)
+uint32_t amc::sca::formatSCAData(const uint32_t& data)
 {
   return (
           ((data&0xff000000)>>24) +
@@ -29,7 +29,7 @@ uint32_t amc::sca::formatSCAData(uint32_t const& data)
           );
 }
 
-void amc::sca::sendSCACommand::operator()(uint8_t const& ch, uint8_t const& cmd, uint8_t const& len, uint32_t data, uint16_t const& ohMask) const
+void amc::sca::sendSCACommand::operator()(const uint8_t& ch, const uint8_t& cmd, const uint8_t& len, const uint32_t& data, const uint16_t& ohMask) const
 {
   // FIXME: DECIDE WHETHER TO HAVE HERE // if (!utils::regExists("GEM_AMC.SLOW_CONTROL.SCA.ADC_MONITORING.MONITORING_OFF").empty()) {
   // FIXME: DECIDE WHETHER TO HAVE HERE //   utils::writeReg("GEM_AMC.SLOW_CONTROL.SCA.ADC_MONITORING.MONITORING_OFF",         0xffffffff);
@@ -43,7 +43,7 @@ void amc::sca::sendSCACommand::operator()(uint8_t const& ch, uint8_t const& cmd,
   utils::writeReg("GEM_AMC.SLOW_CONTROL.SCA.MANUAL_CONTROL.SCA_CMD.SCA_CMD_EXECUTE",0x1);
 }
 
-std::vector<uint32_t> amc::sca::sendSCACommandWithReply::operator()(uint8_t const& ch, uint8_t const& cmd, uint8_t const& len, uint32_t data, uint16_t const& ohMask) const
+std::vector<uint32_t> amc::sca::sendSCACommandWithReply::operator()(const uint8_t& ch, const uint8_t& cmd, const uint8_t& len, const uint32_t& data, const uint16_t& ohMask) const
 {
   // FIXME: DECIDE WHETHER TO HAVE HERE // if (!utils::regExists("GEM_AMC.SLOW_CONTROL.SCA.ADC_MONITORING.MONITORING_OFF").empty()) {
   // FIXME: DECIDE WHETHER TO HAVE HERE //   uint32_t monMask = utils::readReg("GEM_AMC.SLOW_CONTROL.SCA.ADC_MONITORING.MONITORING_OFF");
@@ -70,7 +70,7 @@ std::vector<uint32_t> amc::sca::sendSCACommandWithReply::operator()(uint8_t cons
   return reply;
 }
 
-std::vector<uint32_t> amc::sca::scaCTRLCommand::operator()(sca::CTRLCommand const& cmd, uint16_t const& ohMask, uint8_t const& len, uint32_t const& data) const
+std::vector<uint32_t> amc::sca::scaCTRLCommand::operator()(const sca::CTRLCommand& cmd, const uint16_t& ohMask, const uint8_t& len, const uint32_t& data) const
 {
   uint32_t monMask = 0xffffffff;
   if (!utils::regExists("GEM_AMC.SLOW_CONTROL.SCA.ADC_MONITORING.MONITORING_OFF").empty()) {
@@ -112,7 +112,7 @@ std::vector<uint32_t> amc::sca::scaCTRLCommand::operator()(sca::CTRLCommand cons
   return result;
 }
 
-std::vector<uint32_t> amc::sca::scaI2CCommand::operator()(sca::I2CChannel const& ch, sca::I2CCommand const& cmd, uint8_t const& len, uint32_t data, uint16_t const& ohMask) const
+std::vector<uint32_t> amc::sca::scaI2CCommand::operator()(const sca::I2CChannel& ch, const sca::I2CCommand& cmd, const uint8_t& len, const uint32_t& data, const uint16_t& ohMask) const
 {
 
   // enable the I2C bus through the CTRL CR{B,C,D} registers
@@ -138,7 +138,7 @@ std::vector<uint32_t> amc::sca::scaI2CCommand::operator()(sca::I2CChannel const&
   return result;
 }
 
-std::vector<uint32_t> amc::sca::scaGPIOCommand::operator()(sca::GPIOCommand const& cmd, uint8_t const& len, uint32_t data, uint16_t const& ohMask) const
+std::vector<uint32_t> amc::sca::scaGPIOCommand::operator()(const sca::GPIOCommand& cmd, const uint8_t& len, const uint32_t& data, const uint16_t& ohMask) const
 {
   // enable the GPIO bus through the CTRL CRB register, bit 2
   uint32_t monMask = 0xffffffff;
@@ -156,7 +156,7 @@ std::vector<uint32_t> amc::sca::scaGPIOCommand::operator()(sca::GPIOCommand cons
   return reply;
 }
 
-std::vector<uint32_t> amc::sca::scaADCCommand::operator()(sca::ADCChannel const& ch, uint16_t const& ohMask) const
+std::vector<uint32_t> amc::sca::scaADCCommand::operator()(const sca::ADCChannel& ch, const uint16_t& ohMask) const
 {
   uint32_t monMask = 0xffffffff;
   if (!utils::regExists("GEM_AMC.SLOW_CONTROL.SCA.ADC_MONITORING.MONITORING_OFF").empty()) {
@@ -191,7 +191,7 @@ std::vector<uint32_t> amc::sca::scaADCCommand::operator()(sca::ADCChannel const&
   return result;
 }
 
-std::vector<uint32_t> amc::sca::readSCAChipID::operator()(uint16_t const& ohMask, bool scaV1) const
+std::vector<uint32_t> amc::sca::readSCAChipID::operator()(const uint16_t& ohMask, const bool& scaV1) const
 {
   if (scaV1)
     return amc::sca::scaCTRLCommand{}(sca::CTRLCommand::CTRL_R_ID_V1, ohMask);
@@ -201,7 +201,7 @@ std::vector<uint32_t> amc::sca::readSCAChipID::operator()(uint16_t const& ohMask
   // ID = DATA[23:0], need to have this set up in the reply function somehow?
 }
 
-std::vector<uint32_t> amc::sca::readSCASEUCounter::operator()(uint16_t const& ohMask, bool reset) const
+std::vector<uint32_t> amc::sca::readSCASEUCounter::operator()(const uint16_t& ohMask, const bool& reset) const
 {
   if (reset)
     amc::sca::resetSCASEUCounter{}(ohMask);
@@ -211,12 +211,12 @@ std::vector<uint32_t> amc::sca::readSCASEUCounter::operator()(uint16_t const& oh
   // SEU count = DATA[31:0]
 }
 
-void amc::sca::resetSCASEUCounter::operator()(uint16_t const& ohMask) const
+void amc::sca::resetSCASEUCounter::operator()(const uint16_t& ohMask) const
 {
   amc::sca::scaCTRLCommand{}(sca::CTRLCommand::CTRL_C_SEU, ohMask);
 }
 
-void amc::sca::scaModuleReset::operator()(uint16_t const& ohMask) const
+void amc::sca::scaModuleReset::operator()(const uint16_t& ohMask) const
 {
   // Does this need to be protected, or do all versions of FW have this register?
   uint32_t origMask = utils::readReg("GEM_AMC.SLOW_CONTROL.SCA.CTRL.SCA_RESET_ENABLE_MASK");
@@ -228,12 +228,12 @@ void amc::sca::scaModuleReset::operator()(uint16_t const& ohMask) const
   utils::writeReg("GEM_AMC.SLOW_CONTROL.SCA.CTRL.SCA_RESET_ENABLE_MASK", origMask);
 }
 
-void amc::sca::scaHardResetEnable::operator()(bool en) const
+void amc::sca::scaHardResetEnable::operator()(const bool& en) const
 {
   utils::writeReg("GEM_AMC.SLOW_CONTROL.SCA.CTRL.TTC_HARD_RESET_EN", uint32_t(en));
 }
 
-std::vector<uint32_t> amc::sca::readSCAADCSensor::operator()(sca::ADCChannel const& ch, uint16_t const& ohMask) const
+std::vector<uint32_t> amc::sca::readSCAADCSensor::operator()(const sca::ADCChannel& ch, const uint16_t& ohMask) const
 {
   std::vector<uint32_t> result;
   std::vector<uint32_t> outData;
@@ -250,7 +250,7 @@ std::vector<uint32_t> amc::sca::readSCAADCSensor::operator()(sca::ADCChannel con
   return outData;
 }
 
-std::vector<uint32_t> amc::sca::readSCAADCTemperatureSensors::operator()(uint16_t const& ohMask) const
+std::vector<uint32_t> amc::sca::readSCAADCTemperatureSensors::operator()(const uint16_t& ohMask) const
 {
   sca::ADCChannel chArr[5] = {
     sca::ADCChannel::VTTX_CSC_PT100,
@@ -275,7 +275,7 @@ std::vector<uint32_t> amc::sca::readSCAADCTemperatureSensors::operator()(uint16_
   return outData;
 }
 
-std::vector<uint32_t> amc::sca::readSCAADCVoltageSensors::operator()(uint16_t const& ohMask) const
+std::vector<uint32_t> amc::sca::readSCAADCVoltageSensors::operator()(const uint16_t& ohMask) const
 {
   sca::ADCChannel chArr[6] = {
     sca::ADCChannel::PROM_V1P8,
@@ -301,7 +301,7 @@ std::vector<uint32_t> amc::sca::readSCAADCVoltageSensors::operator()(uint16_t co
   return outData;
 }
 
-std::vector<uint32_t> amc::sca::readSCAADCSignalStrengthSensors::operator()(uint16_t const& ohMask) const
+std::vector<uint32_t> amc::sca::readSCAADCSignalStrengthSensors::operator()(const uint16_t& ohMask) const
 {
   sca::ADCChannel chArr[3] = {
     static_cast<sca::ADCChannel>(sca::ADCChannel::VTRX_RSSI1),
@@ -325,7 +325,7 @@ std::vector<uint32_t> amc::sca::readSCAADCSignalStrengthSensors::operator()(uint
   return outData;
 }
 
-std::vector<uint32_t> amc::sca::readAllSCAADCSensors::operator()(uint16_t const& ohMask) const
+std::vector<uint32_t> amc::sca::readAllSCAADCSensors::operator()(const uint16_t& ohMask) const
 {
   int ohIdx;
   std::vector<uint32_t> result;

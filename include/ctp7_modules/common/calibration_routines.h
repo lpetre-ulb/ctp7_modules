@@ -72,12 +72,12 @@ namespace calibration {
    */
   struct confCalPulse : xhal::common::rpc::Method
   {
-    void operator()(const uint16_t &ohN,
-                    const uint32_t &mask,
-                    const uint8_t &ch,
-                    const bool &toggleOn,
-                    const bool &currentPulse,
-                    const uint32_t &calScaleFactor) const;
+    void operator()(const uint16_t& ohN,
+                    const uint32_t& mask,
+                    const uint8_t& ch,
+                    const bool& toggleOn,
+                    const bool& currentPulse,
+                    const uint32_t& calScaleFactor) const;
   };
 
   /*!
@@ -88,7 +88,7 @@ namespace calibration {
    */
   struct dacMonConf : xhal::common::rpc::Method
   {
-    void operator()(const uint16_t &ohN, const uint8_t &ch) const;
+    void operator()(const uint16_t& ohN, const uint8_t& ch) const;
   };
 
   /*!
@@ -100,7 +100,7 @@ namespace calibration {
    */
   struct ttcGenToggle : xhal::common::rpc::Method
   {
-    void operator()(const bool &enable) const;
+    void operator()(const bool& enable) const;
   };
 
   /*!
@@ -116,8 +116,8 @@ namespace calibration {
    */
   struct ttcGenConf : xhal::common::rpc::Method
   {
-    void operator()(const uint32_t &pulseDelay, const uint32_t &L1Ainterval,
-                    const bool &enable) const;
+    void operator()(const uint32_t& pulseDelay, const uint32_t& L1Ainterval,
+                    const bool& enable) const;
   };
 
   /*!
@@ -141,19 +141,19 @@ namespace calibration {
    */
   struct genScan : xhal::common::rpc::Method
   {
-    std::vector<uint32_t> operator()(const uint16_t &ohN,
-                                     const uint32_t &vfatMask,
-                                     const uint8_t &ch,
-                                     const bool &useCalPulse,
-                                     const bool &currentPulse,
-                                     const uint32_t &calScaleFactor,
-                                     const uint32_t &nevts,
-                                     const uint32_t &dacMin,
-                                     const uint32_t &dacMax,
-                                     const uint32_t &dacStep,
-                                     const std::string &scanReg,
-                                     const bool &useUltra=false,
-                                     const bool &useExtTrig=false) const;
+    std::vector<uint32_t> operator()(const uint16_t& ohN,
+                                     const uint32_t& vfatMask,
+                                     const uint8_t& ch,
+                                     const bool& useCalPulse,
+                                     const bool& currentPulse,
+                                     const uint32_t& calScaleFactor,
+                                     const uint32_t& nevts,
+                                     const uint32_t& dacMin,
+                                     const uint32_t& dacMax,
+                                     const uint32_t& dacStep,
+                                     const std::string& scanReg,
+                                     const bool& useUltra=false,
+                                     const bool& useExtTrig=false) const;
   };
 
   /*!
@@ -176,18 +176,18 @@ namespace calibration {
    */
   struct genChannelScan : xhal::common::rpc::Method
   {
-    std::map<uint32_t, std::vector<uint32_t>> operator()(const uint16_t &ohN,
-                                                         const uint32_t &vfatMask,
-                                                         const bool &useCalPulse,
-                                                         const bool &currentPulse,
-                                                         const uint32_t &calScaleFactor,
-                                                         const uint32_t &nevts,
-                                                         const uint32_t &dacMin,
-                                                         const uint32_t &dacMax,
-                                                         const uint32_t &dacStep,
-                                                         const std::string &scanReg,
-                                                         const bool &useUltra,
-                                                         const bool &useExtTrig) const;
+    std::map<uint32_t, std::vector<uint32_t>> operator()(const uint16_t& ohN,
+                                                         const uint32_t& vfatMask,
+                                                         const bool& useCalPulse,
+                                                         const bool& currentPulse,
+                                                         const uint32_t& calScaleFactor,
+                                                         const uint32_t& nevts,
+                                                         const uint32_t& dacMin,
+                                                         const uint32_t& dacMax,
+                                                         const uint32_t& dacStep,
+                                                         const std::string& scanReg,
+                                                         const bool& useUltra,
+                                                         const bool& useExtTrig) const;
   };
 
   /*!
@@ -217,15 +217,15 @@ namespace calibration {
    */
   struct sbitRateScan : xhal::common::rpc::Method
   {
-    std::map<uint32_t, uint32_t> operator()(const uint16_t &ohN,
-                                            const uint32_t &vfatMask,
-                                            const uint8_t &ch,
-                                            const uint16_t &dacMin,
-                                            const uint16_t &dacMax,
-                                            const uint16_t &dacStep,
-                                            const std::string &scanReg,
-                                            const uint32_t &waitTime,
-                                            const bool &invertVFATPos=false) const;
+    std::map<uint32_t, uint32_t> operator()(const uint16_t& ohN,
+                                            const uint32_t& vfatMask,
+                                            const uint8_t& ch,
+                                            const uint16_t& dacMin,
+                                            const uint16_t& dacMax,
+                                            const uint16_t& dacStep,
+                                            const std::string& scanReg,
+                                            const uint32_t& waitTime,
+                                            const bool& invertVFATPos=false) const;
   };
 
   /*!
@@ -252,13 +252,13 @@ namespace calibration {
    */
   struct sbitRateScanParallel : xhal::common::rpc::Method
   {
-    std::map<uint32_t, std::vector<uint32_t>> operator()(const uint8_t &ch,
-                                                         const uint16_t &dacMin,
-                                                         const uint16_t &dacMax,
-                                                         const uint16_t &dacStep,
-                                                         const std::string &scanReg,
-                                                         const uint16_t &ohMask=0xfff,
-                                                         const uint32_t &waitTime=1) const;
+    std::map<uint32_t, std::vector<uint32_t>> operator()(const uint8_t& ch,
+                                                         const uint16_t& dacMin,
+                                                         const uint16_t& dacMax,
+                                                         const uint16_t& dacStep,
+                                                         const std::string& scanReg,
+                                                         const uint16_t& ohMask=0xfff,
+                                                         const uint32_t& waitTime=1) const;
   };
 
   /*!
@@ -305,15 +305,15 @@ namespace calibration {
    */
   struct checkSbitMappingWithCalPulse : xhal::common::rpc::Method
   {
-    std::vector<uint32_t> operator()(const uint16_t &ohN,
-                                     const uint32_t &vfatN,
-                                     const uint32_t &vfatMask,
-                                     const bool &useCalPulse,
-                                     const bool &currentPulse,
-                                     const uint32_t &calScaleFactor,
-                                     const uint32_t &nevts,
-                                     const uint32_t &L1Ainterval,
-                                     const uint32_t &pulseDelay) const;
+    std::vector<uint32_t> operator()(const uint16_t& ohN,
+                                     const uint32_t& vfatN,
+                                     const uint32_t& vfatMask,
+                                     const bool& useCalPulse,
+                                     const bool& currentPulse,
+                                     const uint32_t& calScaleFactor,
+                                     const uint32_t& nevts,
+                                     const uint32_t& L1Ainterval,
+                                     const uint32_t& pulseDelay) const;
   };
 
   /*!
@@ -338,15 +338,15 @@ namespace calibration {
    */
   struct checkSbitRateWithCalPulse : xhal::common::rpc::Method
   {
-    std::map<std::string, std::vector<uint32_t>> operator()(const uint16_t &ohN,
-                                                            const uint32_t &vfatN,
-                                                            const uint32_t &vfatMask,
-                                                            const bool &useCalPulse,
-                                                            const bool &currentPulse,
-                                                            const uint32_t &calScaleFactor,
-                                                            const uint32_t &waitTime,
-                                                            const uint32_t &pulseRate,
-                                                            const uint32_t &pulseDelay) const;
+    std::map<std::string, std::vector<uint32_t>> operator()(const uint16_t& ohN,
+                                                            const uint32_t& vfatN,
+                                                            const uint32_t& vfatMask,
+                                                            const bool& useCalPulse,
+                                                            const bool& currentPulse,
+                                                            const uint32_t& calScaleFactor,
+                                                            const uint32_t& waitTime,
+                                                            const uint32_t& pulseRate,
+                                                            const uint32_t& pulseDelay) const;
   };
 
   /*!
@@ -368,11 +368,11 @@ namespace calibration {
    */
   struct dacScan : xhal::common::rpc::Method
   {
-    std::vector<uint32_t> operator()(const uint16_t &ohN,
-                                     const uint16_t &dacSelect,
-                                     const uint16_t &dacStep=1,
-                                     const uint32_t &vfatMask=0xff000000,
-                                     const bool &useExtRefADC=false) const;
+    std::vector<uint32_t> operator()(const uint16_t& ohN,
+                                     const uint16_t& dacSelect,
+                                     const uint16_t& dacStep=1,
+                                     const uint32_t& vfatMask=0xff000000,
+                                     const bool& useExtRefADC=false) const;
   };
 
   /*!
@@ -385,11 +385,11 @@ namespace calibration {
    */
   struct dacScanMultiLink : xhal::common::rpc::Method
   {
-    std::map<uint32_t, std::vector<uint32_t>> operator()(const uint16_t &ohMask,
-                                                         const uint16_t &dacSelect,
-                                                         const uint16_t &dacStep=1,
-                                                         const uint32_t &vfatMask=0xff000000,
-                                                         const bool &useExtRefADC=false) const;
+    std::map<uint32_t, std::vector<uint32_t>> operator()(const uint16_t& ohMask,
+                                                         const uint16_t& dacSelect,
+                                                         const uint16_t& dacStep=1,
+                                                         const uint32_t& vfatMask=0xff000000,
+                                                         const bool& useExtRefADC=false) const;
   };
 }
 

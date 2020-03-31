@@ -28,7 +28,7 @@ namespace vfat3 {
    */
   struct vfatSyncCheck : public xhal::common::rpc::Method
   {
-    uint32_t operator()(const uint16_t &ohN, const uint32_t &mask=0xff000000) const;
+    uint32_t operator()(const uint16_t& ohN, const uint32_t& mask=0xff000000) const;
   };
 
   /*!
@@ -40,7 +40,7 @@ namespace vfat3 {
    */
   struct configureVFAT3DACMonitor : public xhal::common::rpc::Method
   {
-    void operator()(const uint16_t &ohN, const uint32_t &mask, const uint32_t &dacSelect) const;
+    void operator()(const uint16_t& ohN, const uint32_t& mask, const uint32_t& dacSelect) const;
   };
 
   /*!
@@ -52,7 +52,7 @@ namespace vfat3 {
    */
   struct configureVFAT3DACMonitorMultiLink : public xhal::common::rpc::Method
   {
-    void operator()(const uint16_t &ohMask, const std::array<uint32_t, amc::OH_PER_AMC> & vfatMasks, const uint32_t &dacSelect) const;
+    void operator()(const uint16_t& ohMask, const std::array<uint32_t, amc::OH_PER_AMC> & vfatMasks, const uint32_t& dacSelect) const;
   };
 
   /*!
@@ -65,7 +65,7 @@ namespace vfat3 {
    */
   struct configureVFAT3s : public xhal::common::rpc::Method
   {
-    void operator()(const uint16_t &ohN, const uint32_t &vfatMask=0xff000000) const;
+    void operator()(const uint16_t& ohN, const uint32_t& vfatMask=0xff000000) const;
   };
 
   /*!
@@ -78,7 +78,7 @@ namespace vfat3 {
    */
   struct getChannelRegistersVFAT3 : public xhal::common::rpc::Method
   {
-    std::vector<uint32_t> operator()(const uint16_t &ohN, const uint32_t &vfatMask=0xff000000) const;
+    std::vector<uint32_t> operator()(const uint16_t& ohN, const uint32_t& vfatMask=0xff000000) const;
   };
 
   /*!
@@ -92,7 +92,7 @@ namespace vfat3 {
    */
   struct readVFAT3ADC : public xhal::common::rpc::Method
   {
-    std::vector<uint32_t> operator()(const uint16_t &ohN, const bool &useExtRefADC=false, const uint32_t &vfatMask=0xff000000) const;
+    std::vector<uint32_t> operator()(const uint16_t& ohN, const bool &useExtRefADC=false, const uint32_t& vfatMask=0xff000000) const;
   };
 
 
@@ -107,7 +107,7 @@ namespace vfat3 {
    */
   struct readVFAT3ADCMultiLink : public xhal::common::rpc::Method
   {
-    std::map<uint32_t,std::vector<uint32_t>> operator()(const uint16_t &ohMask, const bool &useExtRefADC) const;
+    std::map<uint32_t,std::vector<uint32_t>> operator()(const uint16_t& ohMask, const bool &useExtRefADC) const;
   };
 
   /*!
@@ -122,7 +122,7 @@ namespace vfat3 {
    */
   struct setChannelRegistersVFAT3Simple : public xhal::common::rpc::Method
   {
-    void operator()(const uint16_t &ohN, const std::vector<uint32_t> &chanRegData, const uint32_t &vfatMask=0xff000000) const;
+    void operator()(const uint16_t& ohN, const std::vector<uint32_t> &chanRegData, const uint32_t& vfatMask=0xff000000) const;
   };
 
   /*!
@@ -142,14 +142,14 @@ namespace vfat3 {
    */
   struct setChannelRegistersVFAT3 : public xhal::common::rpc::Method
   {
-    void operator()(const uint16_t &ohN,
+    void operator()(const uint16_t& ohN,
                     const std::vector<uint32_t> &calEnable,
                     const std::vector<uint32_t> &masks,
                     const std::vector<uint32_t> &trimARM,
                     const std::vector<uint32_t> &trimARMPol,
                     const std::vector<uint32_t> &trimZCC,
                     const std::vector<uint32_t> &trimZCCPol,
-                    const uint32_t &vfatMask=0xff000000)
+                    const uint32_t& vfatMask=0xff000000)
       const;
   };
 
@@ -162,7 +162,7 @@ namespace vfat3 {
    */
   struct statusVFAT3s : public xhal::common::rpc::Method
   {
-    std::map<std::string, std::vector<uint32_t>> operator()(const uint16_t &ohN) const;
+    std::map<std::string, std::vector<uint32_t>> operator()(const uint16_t& ohN) const;
   };
 
   /*!
@@ -176,7 +176,7 @@ namespace vfat3 {
    */
   struct getVFAT3ChipIDs : public xhal::common::rpc::Method
   {
-    std::vector<uint32_t> operator()(const uint16_t &ohN, const uint32_t &vfatMask=0xff000000, const bool &rawID=false) const;
+    std::vector<uint32_t> operator()(const uint16_t& ohN, const uint32_t& vfatMask=0xff000000, const bool &rawID=false) const;
   };
 
 }

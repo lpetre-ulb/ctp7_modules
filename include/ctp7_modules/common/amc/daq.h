@@ -22,7 +22,7 @@ namespace amc {
      */
     struct  enableDAQLink : public xhal::common::rpc::Method
     {
-      void operator()(uint32_t const& enableMask=0x1) const;
+      void operator()(const uint32_t& enableMask=0x1) const;
     };
 
     /*!
@@ -40,7 +40,7 @@ namespace amc {
      */
     struct setZS : public xhal::common::rpc::Method
     {
-      void operator()(bool enable=true) const;
+      void operator()(const bool& enable=true) const;
     };
     /*!
      * \brief Disable zero suppression of VFAT data
@@ -62,7 +62,7 @@ namespace amc {
      */
     struct resetDAQLink : public xhal::common::rpc::Method
     {
-      void operator()(uint32_t const& davTO=0x500, uint32_t const& ttsOverride=0x0) const;
+      void operator()(const uint32_t& davTO=0x500, const uint32_t& ttsOverride=0x0) const;
     };
 
     /*!
@@ -216,7 +216,7 @@ namespace amc {
      */
     struct getDAQLinkDAVTimer : public xhal::common::rpc::Method
     {
-      uint32_t operator()(bool const& max) const;
+      uint32_t operator()(const bool& max) const;
     };
 
     /*!
@@ -226,7 +226,7 @@ namespace amc {
      */
     struct getLinkDAQStatus : public xhal::common::rpc::Method
     {
-      uint32_t operator()(uint8_t const& gtx) const;
+      uint32_t operator()(const uint8_t& gtx) const;
     };
 
     /*!
@@ -237,7 +237,7 @@ namespace amc {
      */
     struct getLinkDAQCounters : public xhal::common::rpc::Method
     {
-      uint32_t operator()(uint8_t const& gtx, uint8_t const& mode) const;
+      uint32_t operator()(const uint8_t& gtx, const uint8_t& mode) const;
     };
 
     /*!
@@ -247,7 +247,7 @@ namespace amc {
      */
     struct getLinkLastDAQBlock : public xhal::common::rpc::Method
     {
-      uint32_t operator()(uint8_t const& gtx) const;
+      uint32_t operator()(const uint8_t& gtx) const;
     };
 
     /*!
@@ -279,7 +279,7 @@ namespace amc {
      */
     struct getDAQLinkRunParameter : public xhal::common::rpc::Method
     {
-      uint32_t operator()(uint8_t const& parameter) const;
+      uint32_t operator()(const uint8_t& parameter) const;
     };
 
 
@@ -292,7 +292,7 @@ namespace amc {
      */
     struct setDAQLinkInputTimeout : public xhal::common::rpc::Method
     {
-      void operator()(uint32_t const& inputTO=0x100) const;
+      void operator()(const uint32_t& inputTO=0x100) const;
     };
 
     /*!
@@ -302,7 +302,7 @@ namespace amc {
      */
     struct setDAQLinkRunType : public xhal::common::rpc::Method
     {
-      void operator()(uint32_t const& rtype) const;
+      void operator()(const uint32_t& rtype) const;
     };
 
     /*!
@@ -312,7 +312,7 @@ namespace amc {
      */
     struct setDAQLinkRunParameters : public xhal::common::rpc::Method
     {
-      void operator()(uint32_t const& value) const;
+      void operator()(const uint32_t& value) const;
     };
     /*!
      * \param \c parameter is the number of parameter to be written (1-3)
@@ -322,18 +322,18 @@ namespace amc {
      */
     struct setDAQLinkRunParameter : public xhal::common::rpc::Method
     {
-      void operator()(uint8_t const& parameter, uint8_t const& value) const;
+      void operator()(const uint8_t& parameter, const uint8_t& value) const;
     };
 
     /** Composite functions, no specific "local" function defined */
     struct configureDAQModule : public xhal::common::rpc::Method
     {
-      void operator()(bool enableZS=false, uint32_t runType=0x1, bool doPhaseShift=false, bool relock=false, bool bc0LockPSMode=false) const;
+      void operator()(const bool& enableZS=false, const uint32_t& runType=0x1, const bool& doPhaseShift=false, const bool& relock=false, const bool& bc0LockPSMode=false) const;
     };
 
     struct enableDAQModule : public xhal::common::rpc::Method
     {
-      void operator()(bool enableZS=false) const;
+      void operator()(const bool& enableZS=false) const;
     };
   }
 }

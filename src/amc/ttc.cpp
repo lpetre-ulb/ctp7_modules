@@ -26,7 +26,7 @@ void amc::ttc::ttcMMCMReset::operator()() const
   utils::writeReg("GEM_AMC.TTC.CTRL.MMCM_RESET", 0x1);
 }
 
-void amc::ttc::ttcMMCMPhaseShift::operator()(bool relock, bool modeBC0, bool scan) const
+void amc::ttc::ttcMMCMPhaseShift::operator()(const bool& relock, const bool& modeBC0, const bool& scan) const
 {
   auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("main"));
 
@@ -89,7 +89,7 @@ void amc::ttc::ttcMMCMPhaseShift::operator()(bool relock, bool modeBC0, bool sca
 
   uint32_t mmcmShiftCnt = utils::readReg("GEM_AMC.TTC.STATUS.CLK.PA_MANUAL_SHIFT_CNT");
   uint32_t gthShiftCnt  = utils::readReg("GEM_AMC.TTC.STATUS.CLK.PA_MANUAL_GTH_SHIFT_CNT");
-  std::uint32_t pllLockCnt = amc::ttc::checkPLLLock{}(readAttempts);
+  uint32_t pllLockCnt = amc::ttc::checkPLLLock{}(readAttempts);
   bool firstUnlockFound = false;
   bool nextLockFound    = false;
   bool bestLockFound    = false;
@@ -549,7 +549,7 @@ void amc::ttc::ttcMMCMPhaseShift::operator()(bool relock, bool modeBC0, bool sca
   return;
 }
 
-std::uint32_t amc::ttc::checkPLLLock::operator()(const std::uint32_t readAttempts) const
+uint32_t amc::ttc::checkPLLLock::operator()(const uint32_t& readAttempts) const
 {
   auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("main"));
 
@@ -557,7 +557,7 @@ std::uint32_t amc::ttc::checkPLLLock::operator()(const std::uint32_t readAttempt
   std::stringstream msg;
   msg << "Executing checkPLLLock with " << readAttempts << " attempted relocks";
   LOG4CPLUS_DEBUG(logger, msg.str());
-  for (std::uint32_t i = 0; i < readAttempts; ++i ) {
+  for (uint32_t i = 0; i < readAttempts; ++i ) {
     utils::writeReg("GEM_AMC.TTC.CTRL.PA_MANUAL_PLL_RESET", 0x1);
 
     // wait 100us to allow the PLL to lock
@@ -572,7 +572,7 @@ std::uint32_t amc::ttc::checkPLLLock::operator()(const std::uint32_t readAttempt
 }
 
 // FIXME: can maybe abstract this to amc::ttc::getPhase(clk, mode, reads)
-float amc::ttc::getMMCMPhaseMean::operator()(const std::uint32_t readAttempts) const
+float amc::ttc::getMMCMPhaseMean::operator()(const uint32_t& readAttempts) const
 {
   if (readAttempts < 1) {
     return static_cast<float>(utils::readReg("GEM_AMC.TTC.STATUS.CLK.TTC_PM_PHASE_MEAN"));
@@ -580,14 +580,14 @@ float amc::ttc::getMMCMPhaseMean::operator()(const std::uint32_t readAttempts) c
     return static_cast<float>(utils::readReg("GEM_AMC.TTC.STATUS.CLK.TTC_PM_PHASE"));
   } else {
     float mean = 0.;
-    for (std::uint32_t read = 0; read < readAttempts; ++read) {
+    for (uint32_t read = 0; read < readAttempts; ++read) {
       mean += utils::readReg("GEM_AMC.TTC.STATUS.CLK.TTC_PM_PHASE");
     }
     return mean/readAttempts;
   }
 }
 
-float amc::ttc::getGTHPhaseMean::operator()(const std::uint32_t readAttempts) const
+float amc::ttc::getGTHPhaseMean::operator()(const uint32_t& readAttempts) const
 {
   if (readAttempts < 1) {
     return static_cast<float>(utils::readReg("GEM_AMC.TTC.STATUS.CLK.GTH_PM_PHASE_MEAN"));
@@ -595,14 +595,14 @@ float amc::ttc::getGTHPhaseMean::operator()(const std::uint32_t readAttempts) co
     return static_cast<float>(utils::readReg("GEM_AMC.TTC.STATUS.CLK.GTH_PM_PHASE"));
   } else {
     float mean = 0.;
-    for (std::uint32_t read = 0; read < readAttempts; ++read) {
+    for (uint32_t read = 0; read < readAttempts; ++read) {
       mean += utils::readReg("GEM_AMC.TTC.STATUS.CLK.GTH_PM_PHASE");
     }
     return mean/readAttempts;
   }
 }
 
-float amc::ttc::getMMCMPhaseMedian::operator()(const std::uint32_t readAttempts) const
+float amc::ttc::getMMCMPhaseMedian::operator()(const uint32_t& readAttempts) const
 {
   auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("main"));
 
@@ -613,14 +613,14 @@ float amc::ttc::getMMCMPhaseMedian::operator()(const std::uint32_t readAttempts)
     return static_cast<float>(utils::readReg("GEM_AMC.TTC.STATUS.CLK.TTC_PM_PHASE"));
   } else {
     float mean = 0.;
-    for (std::uint32_t read = 0; read < readAttempts; ++read) {
+    for (uint32_t read = 0; read < readAttempts; ++read) {
       mean += utils::readReg("GEM_AMC.TTC.STATUS.CLK.TTC_PM_PHASE");
     }
     return mean/readAttempts;
   }
 }
 
-float amc::ttc::getGTHPhaseMedian::operator()(const std::uint32_t readAttempts) const
+float amc::ttc::getGTHPhaseMedian::operator()(const uint32_t& readAttempts) const
 {
   auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("main"));
 
@@ -631,7 +631,7 @@ float amc::ttc::getGTHPhaseMedian::operator()(const std::uint32_t readAttempts) 
     return static_cast<float>(utils::readReg("GEM_AMC.TTC.STATUS.CLK.GTH_PM_PHASE"));
   } else {
     float mean = 0.;
-    for (std::uint32_t read = 0; read < readAttempts; ++read) {
+    for (uint32_t read = 0; read < readAttempts; ++read) {
       mean += utils::readReg("GEM_AMC.TTC.STATUS.CLK.GTH_PM_PHASE");
     }
     return mean/readAttempts;
@@ -648,13 +648,13 @@ bool amc::ttc::getL1AEnable::operator()() const
   return utils::readReg("GEM_AMC.TTC.CTRL.L1A_ENABLE");
 }
 
-void amc::ttc::setL1AEnable::operator()(bool enable) const
+void amc::ttc::setL1AEnable::operator()(const bool& enable) const
 {
   utils::writeReg("GEM_AMC.TTC.CTRL.L1A_ENABLE", int(enable));
 }
 
 /*** CONFIG submodule ***/
-uint32_t amc::ttc::getTTCConfig::operator()(uint8_t const& cmd) const
+uint32_t amc::ttc::getTTCConfig::operator()(const uint8_t& cmd) const
 {
   auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("main"));
 
@@ -663,7 +663,7 @@ uint32_t amc::ttc::getTTCConfig::operator()(uint8_t const& cmd) const
   return 0x0;
 }
 
-void amc::ttc::setTTCConfig::operator()(uint8_t const& cmd, uint8_t const& value) const
+void amc::ttc::setTTCConfig::operator()(const uint8_t& cmd, const uint8_t& value) const
 {
   auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("main"));
 
@@ -685,7 +685,7 @@ uint32_t amc::ttc::getTTCStatus::operator()() const
   return retval;
 }
 
-uint32_t amc::ttc::getTTCErrorCount::operator()(bool const& single) const
+uint32_t amc::ttc::getTTCErrorCount::operator()(const bool& single) const
 {
   if (single)
     return utils::readReg("GEM_AMC.TTC.STATUS.TTC_SINGLE_ERROR_CNT");
@@ -694,7 +694,7 @@ uint32_t amc::ttc::getTTCErrorCount::operator()(bool const& single) const
 }
 
 /*** CMD_COUNTERS submodule ***/
-uint32_t amc::ttc::getTTCCounter::operator()(uint8_t const& cmd) const
+uint32_t amc::ttc::getTTCCounter::operator()(const uint8_t& cmd) const
 {
   switch(cmd) {
   case(0x1) :

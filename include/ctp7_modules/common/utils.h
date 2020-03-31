@@ -49,7 +49,7 @@ namespace utils {
      */
     struct update_address_table : public xhal::common::rpc::Method
     {
-        void operator()(const std::string &at_xml) const;
+        void operator()(const std::string& at_xml) const;
     };
 
     /*!
@@ -61,7 +61,7 @@ namespace utils {
      */
     struct readRegFromDB : public xhal::common::rpc::Method
     {
-        RegInfo operator()(const std::string &regName) const;
+        RegInfo operator()(const std::string& regName) const;
     };
 
     /*!
@@ -73,7 +73,7 @@ namespace utils {
      */
     struct [[deprecated]] readRemoteReg : public xhal::common::rpc::Method
     {
-        uint32_t operator()(const std::string &regName) const;
+        uint32_t operator()(const std::string& regName) const;
     };
 
     /*!
@@ -85,7 +85,7 @@ namespace utils {
      */
     struct [[deprecated]] writeRemoteReg : public xhal::common::rpc::Method
     {
-        void operator()(const std::string &regName, const uint32_t value) const;
+        void operator()(const std::string& regName, const uint32_t& value) const;
     };
 }
 #endif

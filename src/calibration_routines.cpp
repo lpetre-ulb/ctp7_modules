@@ -19,7 +19,7 @@ namespace calibration {
   auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("logger"));
 }
 
-std::unordered_map<uint32_t, uint32_t> calibration::setSingleChanMask(const uint8_t &ohN, const uint8_t &vfatN, const uint8_t &ch)
+std::unordered_map<uint32_t, uint32_t> calibration::setSingleChanMask(const uint8_t& ohN, const uint8_t& vfatN, const uint8_t& ch)
 {
   std::unordered_map<uint32_t, uint32_t> map_chanOrigMask;
   uint32_t chanMaskAddr;
@@ -44,12 +44,12 @@ void calibration::applyChanMask(const std::unordered_map<uint32_t, uint32_t> &ch
   }
 }
 
-void calibration::confCalPulse::operator()(const uint16_t &ohN,
-                                           const uint32_t &vfatMask,
-                                           const uint8_t &ch,
-                                           const bool &toggleOn,
-                                           const bool &currentPulse,
-                                           const uint32_t &calScaleFactor) const
+void calibration::confCalPulse::operator()(const uint16_t& ohN,
+                                           const uint32_t& vfatMask,
+                                           const uint8_t& ch,
+                                           const bool& toggleOn,
+                                           const bool& currentPulse,
+                                           const uint32_t& calScaleFactor) const
 {
   const uint32_t notmask = (~vfatMask)&0xffffff;
 
@@ -99,7 +99,7 @@ void calibration::confCalPulse::operator()(const uint16_t &ohN,
   return;
 }
 
-void calibration::dacMonConf::operator()(const uint16_t &ohN, const uint8_t &ch) const
+void calibration::dacMonConf::operator()(const uint16_t& ohN, const uint8_t& ch) const
 {
   utils::writeReg("GEM_AMC.GEM_TESTS.VFAT_DAQ_MONITOR.CTRL.ENABLE", 0x0);
   utils::writeReg("GEM_AMC.GEM_TESTS.VFAT_DAQ_MONITOR.CTRL.RESET", 0x1);
@@ -112,7 +112,7 @@ void calibration::dacMonConf::operator()(const uint16_t &ohN, const uint8_t &ch)
   }
 }
 
-void calibration::ttcGenToggle::operator()(const bool &enable) const
+void calibration::ttcGenToggle::operator()(const bool& enable) const
 {
   if (enable) {
     // Internal TTC generator enabled, TTC cmds from backplane are ignored
@@ -123,8 +123,8 @@ void calibration::ttcGenToggle::operator()(const bool &enable) const
   }
 }
 
-void calibration::ttcGenConf::operator()(const uint32_t &pulseDelay, const uint32_t &L1Ainterval,
-                                         const bool &enable) const
+void calibration::ttcGenConf::operator()(const uint32_t& pulseDelay, const uint32_t& L1Ainterval,
+                                         const bool& enable) const
 {
   LOG4CPLUS_INFO(logger, "Entering ttcGenConf");
 
@@ -135,19 +135,19 @@ void calibration::ttcGenConf::operator()(const uint32_t &pulseDelay, const uint3
   ttcGenToggle{}(enable);
 }
 
-std::vector<uint32_t> calibration::genScan::operator()(const uint16_t &ohN,
-                                                       const uint32_t &vfatMask,
-                                                       const uint8_t &ch,
-                                                       const bool &useCalPulse,
-                                                       const bool &currentPulse,
-                                                       const uint32_t &calScaleFactor,
-                                                       const uint32_t &nevts,
-                                                       const uint32_t &dacMin,
-                                                       const uint32_t &dacMax,
-                                                       const uint32_t &dacStep,
-                                                       const std::string &scanReg,
-                                                       const bool &useUltra,
-                                                       const bool &useExtTrig) const
+std::vector<uint32_t> calibration::genScan::operator()(const uint16_t& ohN,
+                                                       const uint32_t& vfatMask,
+                                                       const uint8_t& ch,
+                                                       const bool& useCalPulse,
+                                                       const bool& currentPulse,
+                                                       const uint32_t& calScaleFactor,
+                                                       const uint32_t& nevts,
+                                                       const uint32_t& dacMin,
+                                                       const uint32_t& dacMax,
+                                                       const uint32_t& dacStep,
+                                                       const std::string& scanReg,
+                                                       const bool& useUltra,
+                                                       const bool& useExtTrig) const
 {
   const uint32_t notmask = (~vfatMask)&0xffffff;
 
@@ -280,18 +280,18 @@ std::vector<uint32_t> calibration::genScan::operator()(const uint16_t &ohN,
   return outData;
 }
 
-std::map<uint32_t, std::vector<uint32_t>> calibration::genChannelScan::operator()(const uint16_t &ohN,
-                                                                                  const uint32_t &vfatMask,
-                                                                                  const bool &useCalPulse,
-                                                                                  const bool &currentPulse,
-                                                                                  const uint32_t &calScaleFactor,
-                                                                                  const uint32_t &nevts,
-                                                                                  const uint32_t &dacMin,
-                                                                                  const uint32_t &dacMax,
-                                                                                  const uint32_t &dacStep,
-                                                                                  const std::string &scanReg,
-                                                                                  const bool &useUltra=false,
-                                                                                  const bool &useExtTrig=false) const
+std::map<uint32_t, std::vector<uint32_t>> calibration::genChannelScan::operator()(const uint16_t& ohN,
+                                                                                  const uint32_t& vfatMask,
+                                                                                  const bool& useCalPulse,
+                                                                                  const bool& currentPulse,
+                                                                                  const uint32_t& calScaleFactor,
+                                                                                  const uint32_t& nevts,
+                                                                                  const uint32_t& dacMin,
+                                                                                  const uint32_t& dacMax,
+                                                                                  const uint32_t& dacStep,
+                                                                                  const std::string& scanReg,
+                                                                                  const bool& useUltra=false,
+                                                                                  const bool& useExtTrig=false) const
 {
   std::map<uint32_t, std::vector<uint32_t>> outData;
 
@@ -301,15 +301,15 @@ std::map<uint32_t, std::vector<uint32_t>> calibration::genChannelScan::operator(
   return outData;
 }
 
-std::map<uint32_t, uint32_t> calibration::sbitRateScan::operator()(const uint16_t &ohN,
-                                                                   const uint32_t &vfatMask,
-                                                                   const uint8_t &ch,
-                                                                   const uint16_t &dacMin,
-                                                                   const uint16_t &dacMax,
-                                                                   const uint16_t &dacStep,
-                                                                   const std::string &scanReg,
-                                                                   const uint32_t &waitTime,
-                                                                   const bool &invertVFATPos) const
+std::map<uint32_t, uint32_t> calibration::sbitRateScan::operator()(const uint16_t& ohN,
+                                                                   const uint32_t& vfatMask,
+                                                                   const uint8_t& ch,
+                                                                   const uint16_t& dacMin,
+                                                                   const uint16_t& dacMax,
+                                                                   const uint16_t& dacStep,
+                                                                   const std::string& scanReg,
+                                                                   const uint32_t& waitTime,
+                                                                   const bool& invertVFATPos) const
 {
   std::map<uint32_t, uint32_t> outData;
 
@@ -377,13 +377,13 @@ std::map<uint32_t, uint32_t> calibration::sbitRateScan::operator()(const uint16_
   return outData;
 }
 
-std::map<uint32_t, std::vector<uint32_t>> calibration::sbitRateScanParallel::operator()(const uint8_t &ch,
-                                                                                        const uint16_t &dacMin,
-                                                                                        const uint16_t &dacMax,
-                                                                                        const uint16_t &dacStep,
-                                                                                        const std::string &scanReg,
-                                                                                        const uint16_t &ohMask,
-                                                                                        const uint32_t &waitTime) const
+std::map<uint32_t, std::vector<uint32_t>> calibration::sbitRateScanParallel::operator()(const uint8_t& ch,
+                                                                                        const uint16_t& dacMin,
+                                                                                        const uint16_t& dacMax,
+                                                                                        const uint16_t& dacStep,
+                                                                                        const std::string& scanReg,
+                                                                                        const uint16_t& ohMask,
+                                                                                        const uint32_t& waitTime) const
 {
   if (ohMask > 0xfff) {
     std::stringstream errmsg;
@@ -515,15 +515,15 @@ std::map<uint32_t, std::vector<uint32_t>> calibration::sbitRateScanParallel::ope
   return outData;
 }
 
-std::vector<uint32_t> calibration::checkSbitMappingWithCalPulse::operator()(const uint16_t &ohN,
-                                                                      const uint32_t &vfatN,
-                                                                      const uint32_t &vfatMask,
-                                                                      const bool &useCalPulse,
-                                                                      const bool &currentPulse,
-                                                                      const uint32_t &calScaleFactor,
-                                                                      const uint32_t &nevts,
-                                                                      const uint32_t &L1Ainterval,
-                                                                      const uint32_t &pulseDelay) const
+std::vector<uint32_t> calibration::checkSbitMappingWithCalPulse::operator()(const uint16_t& ohN,
+                                                                      const uint32_t& vfatN,
+                                                                      const uint32_t& vfatMask,
+                                                                      const bool& useCalPulse,
+                                                                      const bool& currentPulse,
+                                                                      const uint32_t& calScaleFactor,
+                                                                      const uint32_t& nevts,
+                                                                      const uint32_t& L1Ainterval,
+                                                                      const uint32_t& pulseDelay) const
 {
   const uint32_t notmask   = ~vfatMask & 0xffffff;
   const uint32_t goodVFATs = vfat3::vfatSyncCheck{}(ohN);
@@ -684,15 +684,15 @@ std::vector<uint32_t> calibration::checkSbitMappingWithCalPulse::operator()(cons
   return outData;
 }
 
-std::map<std::string, std::vector<uint32_t>> calibration::checkSbitRateWithCalPulse::operator()(const uint16_t &ohN,
-                                                                                                const uint32_t &vfatN,
-                                                                                                const uint32_t &vfatMask,
-                                                                                                const bool &useCalPulse,
-                                                                                                const bool &currentPulse,
-                                                                                                const uint32_t &calScaleFactor,
-                                                                                                const uint32_t &waitTime,
-                                                                                                const uint32_t &pulseRate,
-                                                                                                const uint32_t &pulseDelay) const
+std::map<std::string, std::vector<uint32_t>> calibration::checkSbitRateWithCalPulse::operator()(const uint16_t& ohN,
+                                                                                                const uint32_t& vfatN,
+                                                                                                const uint32_t& vfatMask,
+                                                                                                const bool& useCalPulse,
+                                                                                                const bool& currentPulse,
+                                                                                                const uint32_t& calScaleFactor,
+                                                                                                const uint32_t& waitTime,
+                                                                                                const uint32_t& pulseRate,
+                                                                                                const uint32_t& pulseDelay) const
 {
   const uint32_t notmask   = ~vfatMask & 0xffffff;
   const uint32_t goodVFATs = vfat3::vfatSyncCheck{}(ohN);
@@ -866,11 +866,11 @@ std::map<std::string, std::vector<uint32_t>> calibration::checkSbitRateWithCalPu
   return outData;
 }
 
-std::vector<uint32_t> calibration::dacScan::operator()(const uint16_t &ohN,
-                                                       const uint16_t &dacSelect,
-                                                       const uint16_t &dacStep,
-                                                       const uint32_t &vfatMask,
-                                                       const bool &useExtRefADC) const
+std::vector<uint32_t> calibration::dacScan::operator()(const uint16_t& ohN,
+                                                       const uint16_t& dacSelect,
+                                                       const uint16_t& dacStep,
+                                                       const uint32_t& vfatMask,
+                                                       const bool& useExtRefADC) const
 {
   if (calibration::vfat3DACAndSize.count(dacSelect) == 0) {
     std::string errmsg = "Monitoring Select value " + std::to_string(dacSelect) + " not found, possible values are:\n";
@@ -987,11 +987,11 @@ std::vector<uint32_t> calibration::dacScan::operator()(const uint16_t &ohN,
   return dacScanData;
 }
 
-std::map<uint32_t, std::vector<uint32_t>> calibration::dacScanMultiLink::operator()(const uint16_t &ohMask,
-                                                                                    const uint16_t &dacSelect,
-                                                                                    const uint16_t &dacStep,
-                                                                                    const uint32_t &mask,
-                                                                                    const bool &useExtRefADC) const
+std::map<uint32_t, std::vector<uint32_t>> calibration::dacScanMultiLink::operator()(const uint16_t& ohMask,
+                                                                                    const uint16_t& dacSelect,
+                                                                                    const uint16_t& dacStep,
+                                                                                    const uint32_t& mask,
+                                                                                    const bool& useExtRefADC) const
 {
   const uint32_t supOH = utils::readReg("GEM_AMC.GEM_SYSTEM.CONFIG.NUM_OF_OH");
   if (ohMask > (0x1<<supOH))

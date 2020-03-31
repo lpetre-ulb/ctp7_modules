@@ -9,7 +9,7 @@
 #include "ctp7_modules/common/utils.h"
 #include "ctp7_modules/server/utils.h"
 
-void amc::daq::enableDAQLink::operator()(uint32_t const& enableMask) const
+void amc::daq::enableDAQLink::operator()(const uint32_t& enableMask) const
 {
   auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("main"));
   LOG4CPLUS_DEBUG(logger, "enableDAQLinkLocal called");
@@ -24,7 +24,7 @@ void amc::daq::disableDAQLink::operator()() const
   utils::writeReg("GEM_AMC.DAQ.CONTROL.DAQ_ENABLE",        0x0);
 }
 
-void amc::daq::setZS::operator()(bool en) const
+void amc::daq::setZS::operator()(const bool& en) const
 {
   utils::writeReg("GEM_AMC.DAQ.CONTROL.ZERO_SUPPRESSION_EN", uint32_t(en));
 }
@@ -34,7 +34,7 @@ void amc::daq::disableZS::operator()() const
   utils::writeReg("GEM_AMC.DAQ.CONTROL.ZERO_SUPPRESSION_EN", 0x0);
 }
 
-void amc::daq::resetDAQLink::operator()(uint32_t const& davTO, uint32_t const& ttsOverride) const
+void amc::daq::resetDAQLink::operator()(const uint32_t& davTO, const uint32_t& ttsOverride) const
 {
   auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("main"));
   LOG4CPLUS_DEBUG(logger, "resetDAQLinkLocal called");
@@ -157,21 +157,21 @@ uint32_t amc::daq::getDAQLinkDAVTimer::operator()(bool const& max) const
     return lasttimer;
 }
 
-uint32_t amc::daq::getLinkDAQStatus::operator()(uint8_t const& gtx) const
+uint32_t amc::daq::getLinkDAQStatus::operator()(const uint8_t& gtx) const
 {
   auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("main"));
   LOG4CPLUS_WARN(logger,"getLinkDAQStatus not implemented");
   return 0x0;
 }
 
-uint32_t amc::daq::getLinkDAQCounters::operator()(uint8_t const& gtx, uint8_t const& mode) const
+uint32_t amc::daq::getLinkDAQCounters::operator()(const uint8_t& gtx, const uint8_t& mode) const
 {
   auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("main"));
   LOG4CPLUS_WARN(logger,"getLinkDAQCounters not implemented");
   return 0x0;
 }
 
-uint32_t amc::daq::getLinkLastDAQBlock::operator()(uint8_t const& gtx) const
+uint32_t amc::daq::getLinkLastDAQBlock::operator()(const uint8_t& gtx) const
 {
   auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("main"));
   LOG4CPLUS_WARN(logger,"getLinkLastDAQBlock not implemented");
@@ -193,7 +193,7 @@ uint32_t amc::daq::getDAQLinkRunParameters::operator()() const
   return utils::readReg("GEM_AMC.DAQ.EXT_CONTROL.RUN_PARAMS");
 }
 
-uint32_t amc::daq::getDAQLinkRunParameter::operator()(uint8_t const& parameter) const
+uint32_t amc::daq::getDAQLinkRunParameter::operator()(const uint8_t& parameter) const
 {
   std::stringstream regname;
   regname << "GEM_AMC.DAQ.EXT_CONTROL.RUN_PARAM" << static_cast<int>(parameter);
@@ -201,18 +201,18 @@ uint32_t amc::daq::getDAQLinkRunParameter::operator()(uint8_t const& parameter) 
 }
 
 
-void amc::daq::setDAQLinkInputTimeout::operator()(uint32_t const& inputTO) const
+void amc::daq::setDAQLinkInputTimeout::operator()(const uint32_t& inputTO) const
 {
   auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("main"));
   LOG4CPLUS_WARN(logger,"setDAQLinkInputTimeout not implemented");
 }
 
-void amc::daq::setDAQLinkRunType::operator()(uint32_t const& rtype) const
+void amc::daq::setDAQLinkRunType::operator()(const uint32_t& rtype) const
 {
   utils::writeReg("GEM_AMC.DAQ.EXT_CONTROL.RUN_TYPE", rtype);
 }
 
-void amc::daq::setDAQLinkRunParameter::operator()(uint8_t const& parN, uint8_t const& rparam) const
+void amc::daq::setDAQLinkRunParameter::operator()(const uint8_t& parN, const uint8_t& rparam) const
 {
   if (parN < 1 || parN > 3) {
     std::stringstream errmsg;
@@ -225,14 +225,14 @@ void amc::daq::setDAQLinkRunParameter::operator()(uint8_t const& parN, uint8_t c
   utils::writeReg(regBase.str(), rparam);
 }
 
-void amc::daq::setDAQLinkRunParameters::operator()(uint32_t const& rparams) const
+void amc::daq::setDAQLinkRunParameters::operator()(const uint32_t& rparams) const
 {
   utils::writeReg("GEM_AMC.DAQ.EXT_CONTROL.RUN_PARAMS", rparams);
 }
 
 
 /** Composite methods */
-void amc::daq::configureDAQModule::operator()(bool enableZS, uint32_t runType, bool doPhaseShift, bool relock, bool bc0LockPSMode) const
+void amc::daq::configureDAQModule::operator()(const bool& enableZS, const uint32_t& runType, const bool& doPhaseShift, const bool& relock, const bool& bc0LockPSMode) const
 {
   // FIXME: Should the full routine be run in the event of an error?
   // Curently none of these calls will throw/error directly, could handle that here?
@@ -253,7 +253,7 @@ void amc::daq::configureDAQModule::operator()(bool enableZS, uint32_t runType, b
   amc::daq::setDAQLinkRunParameters{}(0xfaac);
 }
 
-void amc::daq::enableDAQModule::operator()(bool enableZS) const
+void amc::daq::enableDAQModule::operator()(const bool& enableZS) const
 {
   // FIXME: Should the full routine be run in the event of an error?
   // Curently none of these calls will throw/error directly, could handle that here?

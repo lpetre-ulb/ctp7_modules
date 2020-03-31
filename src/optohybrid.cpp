@@ -15,7 +15,7 @@ namespace oh {
   auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("logger"));
 }
 
-void oh::broadcastWrite::operator()(const uint32_t &ohN, const std::string &regName, const uint32_t &value, const uint32_t &mask) const
+void oh::broadcastWrite::operator()(const uint32_t& ohN, const std::string& regName, const uint32_t& value, const uint32_t& mask) const
 {
   std::string t_regName;
   for (size_t vfatN = 0; vfatN < oh::VFATS_PER_OH; ++vfatN) {
@@ -27,7 +27,7 @@ void oh::broadcastWrite::operator()(const uint32_t &ohN, const std::string &regN
   }
 }
 
-std::vector<uint32_t> oh::broadcastRead::operator()(const uint32_t &ohN, const std::string &regName, const uint32_t &mask) const
+std::vector<uint32_t> oh::broadcastRead::operator()(const uint32_t& ohN, const std::string& regName, const uint32_t& mask) const
 {
   std::string regBase = "GEM_AMC.OH.OH" + std::to_string(ohN) + ".GEB.VFAT";
 
@@ -50,24 +50,24 @@ std::vector<uint32_t> oh::broadcastRead::operator()(const uint32_t &ohN, const s
   return data;
 }
 
-void oh::biasAllVFATs::operator()(const uint32_t &ohN, const uint32_t &mask) const
+void oh::biasAllVFATs::operator()(const uint32_t& ohN, const uint32_t& mask) const
 {
   for (auto const& it : vfat_parameters) {
     broadcastWrite{}(ohN, it.first, it.second, mask);
   }
 }
 
-void oh::setAllVFATsToRunMode::operator()(const uint32_t &ohN, const uint32_t &mask) const
+void oh::setAllVFATsToRunMode::operator()(const uint32_t& ohN, const uint32_t& mask) const
 {
   broadcastWrite{}(ohN, "CFG_RUN", 0x1, mask);
 }
 
-void oh::setAllVFATsToSleepMode::operator()(const uint32_t &ohN, const uint32_t &mask) const
+void oh::setAllVFATsToSleepMode::operator()(const uint32_t& ohN, const uint32_t& mask) const
 {
   broadcastWrite{}(ohN, "CFG_RUN", 0x0, mask);
 }
 
-void oh::stopCalPulse2AllChannels::operator()(const uint32_t &ohN, const uint32_t &mask, const uint32_t &chMin, const uint32_t &chMax) const
+void oh::stopCalPulse2AllChannels::operator()(const uint32_t& ohN, const uint32_t& mask, const uint32_t& chMin, const uint32_t& chMax) const
 {
   for (size_t vfatN = 0; vfatN < oh::VFATS_PER_OH; ++vfatN) {
     if ((mask >> vfatN) & 0x1)
@@ -79,7 +79,7 @@ void oh::stopCalPulse2AllChannels::operator()(const uint32_t &ohN, const uint32_
   }
 }
 
-std::map<std::string, std::vector<uint32_t>> oh::statusOH::operator()(const uint32_t &ohMask) const
+std::map<std::string, std::vector<uint32_t>> oh::statusOH::operator()(const uint32_t& ohMask) const
 {
   LOG4CPLUS_INFO(logger, "Reeading OH status registers");
 

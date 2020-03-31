@@ -20,12 +20,12 @@ namespace gbt {
   auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("logger"));
 }
 
-std::map<uint32_t, std::vector<uint32_t>> gbt::scanGBTPhases::operator()(const uint32_t &ohN,
-                                                                         const uint32_t &nResets,
-                                                                         const uint8_t &phaseMin,
-                                                                         const uint8_t &phaseMax,
-                                                                         const uint8_t &phaseStep,
-                                                                         const uint32_t &nVerificationReads) const
+std::map<uint32_t, std::vector<uint32_t>> gbt::scanGBTPhases::operator()(const uint32_t& ohN,
+                                                                         const uint32_t& nResets,
+                                                                         const uint8_t& phaseMin,
+                                                                         const uint8_t& phaseMax,
+                                                                         const uint8_t& phaseStep,
+                                                                         const uint32_t& nVerificationReads) const
 {
     LOG4CPLUS_INFO(logger, "Scanning the phases for OH" << ohN);
 
@@ -93,7 +93,7 @@ std::map<uint32_t, std::vector<uint32_t>> gbt::scanGBTPhases::operator()(const u
 
 }
 
-void gbt::writeGBTConfig::operator()(const uint32_t &ohN, const uint32_t &gbtN, const config_t &config) const
+void gbt::writeGBTConfig::operator()(const uint32_t& ohN, const uint32_t& gbtN, const config_t& config) const
 {
     LOG4CPLUS_INFO(logger, "Writing the configuration of OH #" << ohN << " - GBTX #" << gbtN << ".");
 
@@ -115,7 +115,7 @@ void gbt::writeGBTConfig::operator()(const uint32_t &ohN, const uint32_t &gbtN, 
     }
 }
 
-void gbt::writeGBTPhase::operator()(const uint32_t &ohN, const uint32_t &vfatN, const uint8_t &phase) const
+void gbt::writeGBTPhase::operator()(const uint32_t& ohN, const uint32_t& vfatN, const uint8_t& phase) const
 {
     LOG4CPLUS_INFO(logger, "Writing phase " << phase << " to VFAT #" << vfatN << " of OH #" << ohN << ".");
 

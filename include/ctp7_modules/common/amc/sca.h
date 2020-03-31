@@ -31,7 +31,7 @@ namespace amc {
      */
     struct sendSCACommand : public xhal::common::rpc::Method
     {
-      void operator()(uint8_t const& ch, uint8_t const& cmd, uint8_t const& len, uint32_t data, uint16_t const& ohMask=0xfff) const;
+      void operator()(const uint8_t& ch, const uint8_t& cmd, const uint8_t& len, const uint32_t& data, const uint16_t& ohMask=0xfff) const;
     };
 
     /*!
@@ -45,7 +45,7 @@ namespace amc {
      */
     struct sendSCACommandWithReply : public xhal::common::rpc::Method
     {
-      std::vector<uint32_t> operator()(uint8_t const& ch, uint8_t const& cmd, uint8_t const& len, uint32_t data, uint16_t const& ohMask=0xfff) const;
+      std::vector<uint32_t> operator()(const uint8_t& ch, const uint8_t& cmd, const uint8_t& len, const uint32_t&, const uint16_t& ohMask=0xfff) const;
     };
 
     /*!
@@ -63,7 +63,7 @@ namespace amc {
      */
     struct scaCTRLCommand : public xhal::common::rpc::Method
     {
-      std::vector<uint32_t> operator()(sca::CTRLCommand const& cmd, uint16_t const& ohMask=0xfff, uint8_t const& len=0x1, uint32_t const& data=0x0) const;
+      std::vector<uint32_t> operator()(const sca::CTRLCommand& cmd, const uint16_t& ohMask=0xfff, const uint8_t& len=0x1, const uint32_t& data=0x0) const;
     };
 
     /** Locally executed methods */
@@ -80,7 +80,7 @@ namespace amc {
      */
     struct scaI2CCommand : public xhal::common::rpc::Method
     {
-      std::vector<uint32_t> operator()(sca::I2CChannel const& ch, sca::I2CCommand const& cmd, uint8_t const& len, uint32_t data, uint16_t const& ohMask=0xfff) const;
+      std::vector<uint32_t> operator()(const sca::I2CChannel& ch, const sca::I2CCommand& cmd, const uint8_t& len, const uint32_t& data, const uint16_t& ohMask=0xfff) const;
     };
 
     /*!
@@ -96,7 +96,7 @@ namespace amc {
      */
     struct scaGPIOCommand : public xhal::common::rpc::Method
     {
-      std::vector<uint32_t> operator()(sca::GPIOCommand const& cmd, uint8_t const& len, uint32_t data, uint16_t const& ohMask=0xfff) const;
+      std::vector<uint32_t> operator()(const sca::GPIOCommand& cmd, const uint8_t& len, const uint32_t& data, const uint16_t& ohMask=0xfff) const;
     };
 
     /*!
@@ -109,7 +109,7 @@ namespace amc {
      */
     struct scaADCCommand : public xhal::common::rpc::Method
     {
-      std::vector<uint32_t> operator()(sca::ADCChannel const& ch, uint16_t const& ohMask=0xfff) const;
+      std::vector<uint32_t> operator()(const sca::ADCChannel& ch, const uint16_t& ohMask=0xfff) const;
     };
 
     /*** CTRL submodule ***/
@@ -118,7 +118,7 @@ namespace amc {
      */
     struct scaModuleReset : public xhal::common::rpc::Method
     {
-      void operator()(uint16_t const& ohMask) const;
+      void operator()(const uint16_t& ohMask) const;
     };
 
     /*!
@@ -128,7 +128,7 @@ namespace amc {
      */
     struct scaHardResetEnable : public xhal::common::rpc::Method
     {
-      void operator()(bool en) const;
+      void operator()(const bool& en) const;
     };
 
     /*!
@@ -139,7 +139,7 @@ namespace amc {
      */
     struct readSCAChipID : public xhal::common::rpc::Method
     {
-      std::vector<uint32_t> operator()(uint16_t const& ohMask=0xfff, bool scaV1=false) const;
+      std::vector<uint32_t> operator()(const uint16_t& ohMask=0xfff, const bool& scaV1=false) const;
     };
 
     /*!
@@ -150,7 +150,7 @@ namespace amc {
      */
     struct readSCASEUCounter : public xhal::common::rpc::Method
     {
-      std::vector<uint32_t> operator()(uint16_t const& ohMask=0xfff, bool reset=false) const;
+      std::vector<uint32_t> operator()(const uint16_t& ohMask=0xfff, const bool& reset=false) const;
     };
 
     /*!
@@ -160,7 +160,7 @@ namespace amc {
      */
     struct resetSCASEUCounter : public xhal::common::rpc::Method
     {
-      void operator()(uint16_t const& ohMask=0xfff) const;
+      void operator()(const uint16_t& ohMask=0xfff) const;
     };
 
     /* /\*** SCA ADC submodule ***\/ */
@@ -213,7 +213,7 @@ namespace amc {
      */
     struct readSCAADCSensor : public xhal::common::rpc::Method
     {
-      std::vector<uint32_t> operator()(sca::ADCChannel const& ch, uint16_t const& ohMask=0xfff) const;
+      std::vector<uint32_t> operator()(const sca::ADCChannel& ch, const uint16_t& ohMask=0xfff) const;
     };
 
     /*!
@@ -233,7 +233,7 @@ namespace amc {
      */
     struct readSCAADCTemperatureSensors : public xhal::common::rpc::Method
     {
-      std::vector<uint32_t> operator()(uint16_t const& ohMask=0xfff) const;
+      std::vector<uint32_t> operator()(const uint16_t& ohMask=0xfff) const;
     };
 
     /*!
@@ -253,7 +253,7 @@ namespace amc {
      */
     struct readSCAADCVoltageSensors : public xhal::common::rpc::Method
     {
-      std::vector<uint32_t> operator()(uint16_t const& ohMask=0xfff) const;
+      std::vector<uint32_t> operator()(const uint16_t& ohMask=0xfff) const;
     };
 
     /*!
@@ -273,7 +273,7 @@ namespace amc {
      */
     struct readSCAADCSignalStrengthSensors : public xhal::common::rpc::Method
     {
-      std::vector<uint32_t> operator()(uint16_t const& ohMask=0xfff) const;
+      std::vector<uint32_t> operator()(const uint16_t& ohMask=0xfff) const;
     };
 
     /*!
@@ -293,7 +293,7 @@ namespace amc {
      */
     struct readAllSCAADCSensors : public xhal::common::rpc::Method
     {
-      std::vector<uint32_t> operator()(uint16_t const& ohMask=0xfff) const;
+      std::vector<uint32_t> operator()(const uint16_t& ohMask=0xfff) const;
     };
 
   }

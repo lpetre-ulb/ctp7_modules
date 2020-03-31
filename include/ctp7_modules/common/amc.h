@@ -28,7 +28,7 @@ namespace amc {
    */
   struct getOHVFATMask : public xhal::common::rpc::Method
   {
-    uint32_t operator()(const uint32_t &ohN) const;
+    uint32_t operator()(const uint32_t& ohN) const;
   };
 
   /*!
@@ -40,7 +40,7 @@ namespace amc {
    */
   struct getOHVFATMaskMultiLink : public xhal::common::rpc::Method
   {
-    std::vector<uint32_t> operator()(const uint32_t &ohMask=0xfff) const;
+    std::vector<uint32_t> operator()(const uint32_t& ohMask=0xfff) const;
   };
 
   /*!
@@ -79,7 +79,7 @@ namespace amc {
    */
   struct sbitReadOut : public xhal::common::rpc::Method
   {
-    std::vector<uint32_t> operator()(const uint32_t &ohN, const uint32_t &acquireTime) const;
+    std::vector<uint32_t> operator()(const uint32_t& ohN, const uint32_t& acquireTime) const;
   };
 
   /*!
@@ -100,7 +100,7 @@ namespace amc {
    */
   struct repeatedRegRead : public xhal::common::rpc::Method
   {
-    std::map<std::string,uint32_t> operator()(const std::vector<std::string> &regList, const bool &breakOnFailure=false, const uint32_t &nReads=100) const;
+    std::map<std::string,uint32_t> operator()(const std::vector<std::string>& regList, const bool& breakOnFailure=false, const uint32_t& nReads=100) const;
   };
 }
 

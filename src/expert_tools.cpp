@@ -9,12 +9,12 @@
 
 #include "xhal/common/rpc/register.h"
 
-std::uint32_t expert::readRawAddress::operator()(const std::uint32_t &address) const
+uint32_t expert::readRawAddress::operator()(const uint32_t& address) const
 {
     return utils::readRawAddress(address);
 }
 
-void expert::writeRawAddress::operator()(const std::uint32_t &address, const std::uint32_t &value) const
+void expert::writeRawAddress::operator()(const uint32_t& address, const uint32_t& value) const
 {
     return utils::writeRawAddress(address, value);
 }
