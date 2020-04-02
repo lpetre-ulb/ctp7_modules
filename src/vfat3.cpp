@@ -308,7 +308,7 @@ std::map<uint32_t,std::vector<uint32_t>> vfat3::readVFAT3ADCMultiLink::operator(
   return adcData;
 }
 
-void vfat3::setChannelRegistersVFAT3Simple::operator()(const uint16_t& ohN, const std::vector<uint32_t> &chanRegData, const uint32_t& vfatMask) const
+void vfat3::setChannelRegistersVFAT3Simple::operator()(const uint16_t& ohN, const std::vector<uint32_t>& chanRegData, const uint32_t& vfatMask) const
 {
   const uint32_t notmask = ~vfatMask & 0xFFFFFF;
 
