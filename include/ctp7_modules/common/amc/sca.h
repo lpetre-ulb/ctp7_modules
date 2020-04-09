@@ -45,7 +45,7 @@ namespace amc {
      */
     struct sendSCACommandWithReply : public xhal::common::rpc::Method
     {
-      std::vector<uint32_t> operator()(const uint8_t& ch, const uint8_t& cmd, const uint8_t& len, const uint32_t&, const uint16_t& ohMask=0xfff) const;
+      std::vector<uint32_t> operator()(const uint8_t& ch, const uint8_t& cmd, const uint8_t& len, const uint32_t& data, const uint16_t& ohMask=0xfff) const;
     };
 
     /*!

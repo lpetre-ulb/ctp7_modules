@@ -52,7 +52,7 @@ namespace vfat3 {
    */
   struct configureVFAT3DACMonitorMultiLink : public xhal::common::rpc::Method
   {
-    void operator()(const uint16_t& ohMask, const std::array<uint32_t, amc::OH_PER_AMC> & vfatMasks, const uint32_t& dacSelect) const;
+    void operator()(const uint16_t& ohMask, const std::array<uint32_t, amc::OH_PER_AMC>& vfatMasks, const uint32_t& dacSelect) const;
   };
 
   /*!
@@ -122,7 +122,7 @@ namespace vfat3 {
    */
   struct setChannelRegistersVFAT3Simple : public xhal::common::rpc::Method
   {
-    void operator()(const uint16_t& ohN, const std::vector<uint32_t> &chanRegData, const uint32_t& vfatMask=0xff000000) const;
+    void operator()(const uint16_t& ohN, const std::vector<uint32_t>& chanRegData, const uint32_t& vfatMask=0xff000000) const;
   };
 
   /*!
@@ -176,7 +176,7 @@ namespace vfat3 {
    */
   struct getVFAT3ChipIDs : public xhal::common::rpc::Method
   {
-    std::vector<uint32_t> operator()(const uint16_t& ohN, const uint32_t& vfatMask=0xff000000, const bool &rawID=false) const;
+    std::vector<uint32_t> operator()(const uint16_t& ohN, const uint32_t& vfatMask=0xff000000, const bool& rawID=false) const;
   };
 
 }

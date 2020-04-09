@@ -160,7 +160,7 @@ namespace amc {
          */
         struct writeConfRAM : public xhal::common::rpc::Method
         {
-            void operator()(BLASTERType const& type, const std::vector<uint32_t>& blob) const;
+            void operator()(const BLASTERType& type, const std::vector<uint32_t>& blob) const;
         };
 
         /*!
